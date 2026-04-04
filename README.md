@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎓 Shotota V2 - Professional Exam Platform
 
-## Getting Started
+> A budget-friendly, semi-professional exam preparation platform for competitive exams
 
-First, run the development server:
+## 📋 Project Overview
+
+Shotota is a comprehensive exam preparation platform with:
+- 🏫 **Student Portal**: Take exams, track performance, compete on leaderboards
+- 📚 **Instructor Panel**: Create courses and upload bulk questions
+- 👨‍💼 **Admin Dashboard**: Manage platform, verify payments, view analytics
+
+## 🌟 Key Features
+
+### For Students
+- ✅ Browse and enroll in courses via bKash (manual verification)
+- ✅ Take MCQ exams with timer
+- ✅ Negative marking system
+- ✅ Track performance (daily, weekly, monthly)
+- ✅ Upload attachments
+- ✅ Compete on leaderboards
+
+### For Instructors
+- ✅ Create courses with rich descriptions
+- ✅ Bulk upload questions from PDF/Word
+- ✅ Set exam parameters
+- ✅ View student performance
+
+## 📁 Quick Start
 
 ```bash
+# 1. Install dependencies
+npm install
+
+# 2. Copy environment file
+cp .env.example .env.local
+
+# 3. Setup database
+npx prisma migrate dev --name init
+
+# 4. Start dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**📚 IMPORTANT**: Read the documentation in `/docs/`:
+- `docs/SETUP.md` - Installation instructions
+- `docs/FILE_STRUCTURE.md` - Project organization
+- `docs/FEATURES.md` - Development roadmap
+- `docs/DATABASE.md` - Database schema
+- `docs/API.md` - API documentation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Frontend**: Next.js 16, React, TypeScript, Tailwind CSS
+- **Backend**: Next.js API Routes
+- **Database**: PostgreSQL + Prisma ORM
+- **Animations**: Framer Motion
+- **File Parsing**: PDF.js, docx library
 
-## Learn More
+## 📊 Status
 
-To learn more about Next.js, take a look at the following resources:
+- ✅ Project structure & documentation created
+- ✅ Git branches setup (main, develop, staging)
+- ⬜ Database setup & migrations
+- ⬜ Core features development
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Next**: See `docs/SETUP.md` to get started!
