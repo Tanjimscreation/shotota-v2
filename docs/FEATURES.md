@@ -233,41 +233,125 @@
 
 ---
 
-## 📊 PHASE 5: STUDENT ANALYTICS (Week 6-7)
+## 📊 PHASE 5: STUDENT ANALYTICS - DAILY/WEEKLY/MONTHLY NEGATIVE MARK TRACKER (Week 6-7)
 
-### 5.1 Student Performance Tracking
-- [ ] Negative marking percentage (per exam)
-- [ ] Daily analytics (exams taken, avg score)
-- [ ] Weekly analytics (best exam, worst exam)
-- [ ] Monthly analytics (total exams, trends)
-- [ ] Overall performance dashboard
-- **Implementation Notes**:
-  ```typescript
-  // Calculate negative marking percentage
-  const negativePercentage = (totalNegativeMarks / totalQuestions) * 100
+### 5.1 Daily/Weekly/Monthly Negative Mark Tracker ⭐ **NEW**
+The most requested feature - detailed negative marking analytics!
+
+**Daily Tracking:**
+- [ ] Group exams by date
+- [ ] Show daily negative mark percentage
+- [ ] Count exams per day
+- [ ] Display all scores for that day
+- [ ] Visual progress bar per day
+- **Formula**: (Total Negative Marks / Total Questions) × 100
+
+**Weekly Tracking:**
+- [ ] Group exams by week (Sunday-Saturday)
+- [ ] Calculate weekly negative mark percentage
+- [ ] Show daily breakdown within week
+- [ ] Identify best/worst days in week
+- [ ] Week-over-week comparison
+- **Features**:
+  ```
+  Week of Apr 1 - Apr 7
+  Exams: 5 | Questions: 50 | Negative Marks: 12.5
+  Negative Mark %: 25%
   
-  // Filter results by date range
-  const weeklyResults = results.filter(r => 
-    r.createdAt > new Date(Date.now() - 7*24*60*60*1000)
-  )
+  Daily breakdown:
+  Mon Apr 1: 20%  📊 Bar graph
+  Tue Apr 2: 28%  📊
+  Wed Apr 3: 15%  📊 ← Best day
+  Thu Apr 4: 35%  📊 ← Worst day
   ```
 
-### 5.2 Student Dashboard
+**Monthly Tracking:**
+- [ ] Group exams by calendar month
+- [ ] Track month-over-month improvement
+- [ ] Show improvement % (positive = getting better)
+- [ ] Weekly breakdown within month
+- [ ] Monthly comparison graph
+- **Example**:
+  ```
+  March 2026: 32% negative marks
+  April 2026: 28% negative marks
+  Improvement: +4% ✓ (You improved!)
+  ```
+
+**Implementation:**
+- [ ] Create types: `NegativeMarkStats`, `DailyAnalytics`, `WeeklyAnalytics`, `MonthlyAnalytics`
+- [ ] Create utilities: `calculateDailyAnalytics()`, `calculateWeeklyAnalytics()`, `calculateMonthlyAnalytics()`
+- [ ] Create component: `NegativeMarkTracker.tsx` with tabs (Daily/Weekly/Monthly)
+- [ ] Create API: `GET /api/analytics/negative-marks?period=daily|weekly|monthly`
+- [ ] Add charts using Recharts (trend lines)
+- [ ] Show insights (average, trend direction, pattern analysis)
+
+**Files Created:**
+```
+✅ src/types/index.ts - Added analytics types
+✅ src/lib/utils/analyticsHelpers.ts - Analytics calculation functions
+✅ src/components/exam/NegativeMarkTracker.tsx - Main tracker component
+✅ app/api/analytics/negative-marks/route.ts - API endpoint
+```
+
+**Usage Example:**
+```typescript
+// Get all data
+const dashboard = buildPerformanceDashboard(userId, userName, allResults)
+
+// Display daily
+dashboard.daily.forEach(day => {
+  console.log(`${day.date}: ${day.negativeMarkPercentage}%`)
+})
+
+// Display weekly
+dashboard.weekly.forEach(week => {
+  console.log(`Week ${week.weekStart}: ${week.negativeMarkPercentage}%`)
+})
+
+// Display monthly
+dashboard.monthly.forEach(month => {
+  console.log(`${month.month}/${month.year}: ${month.negativeMarkPercentage}%`)
+})
+
+// Display in component
+<NegativeMarkTracker dashboard={dashboard} />
+```
+
+### 5.2 Student Performance Tracking
+- [ ] Negative marking percentage (per exam) ✅ **In tracker**
+- [ ] Daily analytics (exams taken, avg score) ✅ **In tracker**
+- [ ] Weekly analytics (best exam, worst exam) ✅ **In tracker**
+- [ ] Monthly analytics (total exams, trends) ✅ **In tracker**
+- [ ] Overall performance dashboard ✅ **In tracker**
+- **Implementation Notes**:
+  ```typescript
+  // Utilities already created in analyticsHelpers.ts
+  const overall = calculateNegativeMarkStats(results)
+  const daily = calculateDailyAnalytics(results)
+  const weekly = calculateWeeklyAnalytics(results)
+  const monthly = calculateMonthlyAnalytics(results)
+  ```
+
+### 5.3 Student Dashboard
 - [ ] Enrolled courses
 - [ ] Completed exams
-- [ ] Performance graph (chart)
+- [ ] Performance graph (chart) - use `NegativeMarkTracker`
 - [ ] Quick stats (total attempts, avg score)
 - [ ] Recent activity feed
+- [ ] **Highlight**: Add negative mark tracker prominently
 - **Implementation Notes**:
   - Use Chart.js or Recharts for graphs
   - Fetch user results from `/api/results`
   - Display time-filtered data
+  - Integrate `NegativeMarkTracker` component
 
-### 5.3 Profile Page
+### 5.4 Profile Page
 - [ ] User information
 - [ ] Edit profile
 - [ ] Change password
 - [ ] View enrollment history
+- [ ] View negative mark statistics
 - [ ] Download certificates (optional)
 
 ---

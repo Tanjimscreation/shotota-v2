@@ -20,6 +20,60 @@ export interface AuthToken {
   user: User
 }
 
+// Analytics Types for Negative Marks Tracking
+export interface NegativeMarkStats {
+  totalExams: number
+  totalNegativeMarks: number
+  totalQuestions: number
+  negativeMarkPercentage: number // (totalNegativeMarks / totalQuestions) * 100
+  averageNegativeMarksPerExam: number
+  trend: 'improving' | 'declining' | 'stable' // compared to previous period
+}
+
+export interface DailyAnalytics {
+  date: Date | string
+  examsCount: number
+  totalNegativeMarks: number
+  totalQuestions: number
+  negativeMarkPercentage: number
+  scores: number[] // all exam scores on that day
+}
+
+export interface WeeklyAnalytics {
+  weekStart: Date | string
+  weekEnd: Date | string
+  examsCount: number
+  totalNegativeMarks: number
+  totalQuestions: number
+  negativeMarkPercentage: number
+  dailyBreakdown: DailyAnalytics[]
+}
+
+export interface MonthlyAnalytics {
+  month: number // 1-12
+  year: number
+  examsCount: number
+  totalNegativeMarks: number
+  totalQuestions: number
+  negativeMarkPercentage: number
+  weeklyBreakdown: WeeklyAnalytics[]
+  improvement: number // percentage change from previous month
+}
+
+export interface StudentPerformanceDashboard {
+  userId: string
+  userName: string
+  overall: NegativeMarkStats
+  daily: DailyAnalytics[]
+  weekly: WeeklyAnalytics[]
+  monthly: MonthlyAnalytics[]
+  charts: {
+    dailyTrend: Array<{ date: string; percentage: number }>
+    weeklyTrend: Array<{ week: string; percentage: number }>
+    monthlyTrend: Array<{ month: string; percentage: number }>
+  }
+}
+
 // Course Types
 export interface Course {
   id: string
@@ -90,6 +144,7 @@ export interface ExamResult {
   score: number
   percentage: number
   negativeMarks: number
+  negativeMarkPercentage: number // (negativeMarks / totalQuestions) * 100
   timeTaken: number // seconds
   answers: Record<string, string> // { questionId: "A" }
   status: ExamStatus
