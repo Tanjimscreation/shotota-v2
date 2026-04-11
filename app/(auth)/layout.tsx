@@ -9,7 +9,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         <div className="text-center mb-8">
           <Link href="/" className="inline-block mb-6">
             <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-green-600" style={{ fontFamily: '"Poppins", "Segoe UI", sans-serif' }}>
-              শটোটা
+              সততা
             </h1>
           </Link>
           <p className="text-gray-700 font-medium text-base" style={{ fontFamily: '"Poppins", "Segoe UI", sans-serif' }}>আপনার পরীক্ষায় আয়ত্ত করুন</p>
@@ -22,7 +22,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
 
         {/* Footer */}
         <p className="text-center text-sm text-gray-600 mt-6 font-medium" style={{ fontFamily: '"Poppins", "Segoe UI", sans-serif' }}>
-          শটোটা দ্বারা চালিত © 2026
+          সততা দ্বারা চালিত © 2026
         </p>
       </div>
     </div>

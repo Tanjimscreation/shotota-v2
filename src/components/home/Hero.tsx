@@ -69,7 +69,7 @@ export const Hero: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          শটোটা
+          সততা
         </motion.h1>
         
         <motion.div
