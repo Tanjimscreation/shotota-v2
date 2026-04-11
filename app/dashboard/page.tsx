@@ -2,265 +2,243 @@
 
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { FiBook, FiCheckCircle, FiClock, FiTrendingUp, FiZap } from 'react-icons/fi'
-
-interface DashboardData {
-  user: {
-    id: string
-    name: string
-    email: string
-  }
-  stats: {
-    totalCourses: number
-    completedCourses: number
-    inProgressCourses: number
-    totalHours: number
-    completionRate: number
-    streak: number
-  }
-  enrolledCourses: Array<{
-    id: string
-    title: string
-    description: string
-    instructor: string
-    thumbnail?: string
-    category: string
-    duration: number
-    progress: number
-  }>
-}
+import { FiBook, FiCheckCircle, FiTrendingUp, FiAward, FiZap } from 'react-icons/fi'
+import { DashboardLayout } from '@/components/DashboardLayout'
 
 export default function DashboardPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const [data, setData] = useState<DashboardData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [activeTab, setActiveTab] = useState<'progress' | 'exams' | 'certs'>('progress')
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login')
-      return
-    }
-
-    if (status === 'authenticated') {
-      const fetchDashboard = async () => {
-        try {
-          setLoading(true)
-          const res = await fetch('/api/dashboard')
-          if (!res.ok) throw new Error('Failed to fetch dashboard')
-          const dashboardData = await res.json()
-          setData(dashboardData)
-        } catch (error) {
-          console.error('Dashboard error:', error)
-        } finally {
-          setLoading(false)
-        }
-      }
-
-      fetchDashboard()
     }
   }, [status, router])
 
-  if (status === 'loading' || loading) {
+  if (status === 'loading') {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-screen">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="w-12 h-12 border-4 border-sotota-accent border-t-transparent rounded-full"
+          />
+        </div>
+      </DashboardLayout>
+    )
+  }
+
+  // Stats Cards with Counter Animation
+  const StatsCard = ({ value, label, icon: Icon }: { value: string; label: string; icon: any }) => (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-sotota-card border border-sotota-border rounded-lg p-6"
+    >
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sotota-muted text-sm mb-2">{label}</p>
+          <p className="text-3xl font-bold text-sotota-accent sotota-stat">{value}</p>
+        </div>
+        <Icon className="text-sotota-accent opacity-50" size={40} />
+      </div>
+    </motion.div>
+  )
+
+  // Progress Item
+  const ProgressItem = ({ title, progress }: { title: string; progress: number }) => (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="mb-6"
+    >
+      <div className="flex justify-between items-center mb-2">
+        <p className="text-sotota-text font-medium">{title}</p>
+        <span className="text-sotota-accent text-sm">{progress}%</span>
+      </div>
+      <div className="w-full h-2 bg-sotota-card2 rounded-full overflow-hidden">
         <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full"
+          initial={{ width: 0 }}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 1, delay: 0.2 }}
+          className="h-full bg-gradient-to-r from-sotota-accent to-sotota-accentl"
         />
       </div>
-    )
-  }
-
-  if (!data) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-emerald-300 mb-4">Failed to Load Dashboard</h2>
-          <Link href="/courses" className="text-teal-400 font-semibold hover:text-teal-300 transition">
-            Go to Courses
-          </Link>
-        </div>
-      </div>
-    )
-  }
+    </motion.div>
+  )
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 pt-20 pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-12"
-        >
-          <h1 className="text-5xl font-black bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent mb-2">
-            Welcome back, {data.user.name}!
-          </h1>
-          <p className="text-emerald-200 text-lg">
-            Keep learning and growing. You're doing great!
-          </p>
-        </motion.div>
-
-        {/* Stats Grid */}
+    <DashboardLayout>
+      <div className="max-w-7xl mx-auto">
+        {/* Stats Row */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
         >
-          {/* Total Courses */}
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-emerald-500 border-opacity-30 p-6 hover:border-opacity-60 transition">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-emerald-200 font-semibold">Enrolled Courses</h3>
-              <FiBook className="text-emerald-400 text-2xl" />
-            </div>
-            <p className="text-4xl font-black text-emerald-300">{data.stats.totalCourses}</p>
-            <p className="text-emerald-300 text-sm mt-2">{data.stats.inProgressCourses} in progress</p>
-          </div>
-
-          {/* Completed */}
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-teal-500 border-opacity-30 p-6 hover:border-opacity-60 transition">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-emerald-200 font-semibold">Completed</h3>
-              <FiCheckCircle className="text-teal-400 text-2xl" />
-            </div>
-            <p className="text-4xl font-black text-teal-300">{data.stats.completedCourses}</p>
-            <p className="text-teal-300 text-sm mt-2">{data.stats.completionRate}% overall</p>
-          </div>
-
-          {/* Total Hours */}
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-cyan-500 border-opacity-30 p-6 hover:border-opacity-60 transition">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-emerald-200 font-semibold">Total Hours</h3>
-              <FiClock className="text-cyan-400 text-2xl" />
-            </div>
-            <p className="text-4xl font-black text-cyan-300">{data.stats.totalHours}h</p>
-            <p className="text-cyan-300 text-sm mt-2">Learning time invested</p>
-          </div>
-
-          {/* Streak */}
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-orange-500 border-opacity-30 p-6 hover:border-opacity-60 transition">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-emerald-200 font-semibold">Learn Streak</h3>
-              <FiZap className="text-orange-400 text-2xl" />
-            </div>
-            <p className="text-4xl font-black text-orange-300">{data.stats.streak}</p>
-            <p className="text-orange-300 text-sm mt-2">Days in a row</p>
-          </div>
+          <StatsCard value="২,৪৫০" label="মোট স্কোর" icon={FiTrendingUp} />
+          <StatsCard value="৮" label="ভর্তি কোর্স" icon={FiBook} />
+          <StatsCard value="१२" label="ধারাবাহিকতা" icon={FiZap} />
+          <StatsCard value="#১২" label="র‍্যাংক" icon={FiAward} />
         </motion.div>
 
-        {/* Continue Learning Section */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-12"
-        >
-          <h2 className="text-3xl font-black text-emerald-300 mb-6">Continue Learning</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content - Tabs */}
+          <div className="lg:col-span-2">
+            {/* Tab Switcher */}
+            <div className="flex gap-2 mb-6 border-b border-sotota-border pb-4">
+              {['progress', 'exams', 'certs'].map((tab) => (
+                <motion.button
+                  key={tab}
+                  onClick={() => setActiveTab(tab as any)}
+                  className={`px-4 py-2 rounded-lg font-medium transition ${
+                    activeTab === tab
+                      ? 'bg-sotota-accent text-white'
+                      : 'text-sotota-muted hover:text-sotota-text'
+                  }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {tab === 'progress' && 'অগ্রগতি'}
+                  {tab === 'exams' && 'পরীক্ষা'}
+                  {tab === 'certs' && 'সার্টিফিকেট'}
+                </motion.button>
+              ))}
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.enrolledCourses.slice(0, 3).map((course, index) => (
-              <motion.div
-                key={course.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-                className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-emerald-500 border-opacity-30 overflow-hidden hover:border-opacity-60 transition group cursor-pointer"
-              >
-                <Link href={`/courses/${course.id}`} className="block">
-                  {/* Progress Bar */}
-                  <div className="h-1 bg-slate-700">
-                    <div
-                      className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all duration-300"
-                      style={{ width: `${course.progress}%` }}
-                    />
-                  </div>
-
-                  <div className="p-6">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h3 className="text-lg font-bold text-emerald-300 group-hover:text-teal-300 transition line-clamp-2">
-                          {course.title}
-                        </h3>
-                        <p className="text-emerald-200 text-sm mt-1">{course.instructor}</p>
-                      </div>
-                      <span className="text-xs font-semibold text-emerald-400 bg-emerald-900 bg-opacity-50 px-3 py-1 rounded-full whitespace-nowrap">
-                        {course.progress}%
-                      </span>
-                    </div>
-
-                    <p className="text-emerald-200 text-sm line-clamp-2 mb-4">{course.description}</p>
-
-                    <div className="flex items-center justify-between text-xs text-emerald-300">
-                      <span>{course.category}</span>
-                      <span>{course.duration}h</span>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* All Enrolled Courses */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-3xl font-black text-emerald-300">All Enrolled Courses</h2>
-            <Link
-              href="/courses"
-              className="text-teal-400 hover:text-teal-300 font-semibold transition flex items-center gap-2"
+            {/* Tab Content */}
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+              className="bg-sotota-card border border-sotota-border rounded-lg p-6"
             >
-              View all <FiTrendingUp />
-            </Link>
-          </div>
+              {activeTab === 'progress' && (
+                <div>
+                  <h3 className="text-xl font-bold text-sotota-text mb-6">আপনার কোর্স প্রগতি</h3>
+                  <ProgressItem title="বায়োলজি ফাউন্ডেশন" progress={85} />
+                  <ProgressItem title="অর্গানিক কেমিস্ট্রি" progress={72} />
+                  <ProgressItem title="ফিজিক্স এডভান্সড" progress={60} />
+                  <ProgressItem title="মেডিকেল জিনেটিক্স" progress={45} />
+                </div>
+              )}
 
-          <div className="space-y-4">
-            {data.enrolledCourses.map((course) => (
-              <motion.div
-                key={course.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-                className="bg-gradient-to-r from-slate-800 to-slate-900 rounded-lg border border-emerald-500 border-opacity-20 p-6 hover:border-opacity-50 transition group cursor-pointer"
-              >
-                <Link href={`/courses/${course.id}`} className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-bold text-emerald-300 group-hover:text-teal-300 transition mb-1">
-                      {course.title}
-                    </h3>
-                    <p className="text-emerald-200 text-sm">{course.instructor}</p>
-                  </div>
-
-                  <div className="flex items-center gap-8">
-                    {/* Progress */}
-                    <div className="text-right">
-                      <div className="w-48 h-2 bg-slate-700 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-emerald-500 to-teal-500"
-                          style={{ width: `${course.progress}%` }}
-                        />
+              {activeTab === 'exams' && (
+                <div>
+                  <h3 className="text-xl font-bold text-sotota-text mb-6">সাম্প্রতিক পরীক্ষা</h3>
+                  {[
+                    { name: 'বায়োলজি মক টেস্ট', score: '৭৮/১০০', difficulty: 'মধ্যম' },
+                    { name: 'কেমিস্ট্রি চ্যালেঞ্জ', score: '৬৫/১০০', difficulty: 'কঠিন' },
+                    { name: 'ফিজিক্স প্র্যাকটিস', score: '৯২/১০০', difficulty: 'সহজ' }
+                  ].map((exam, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                      className="flex justify-between items-center py-3 border-b border-sotota-border last:border-0"
+                    >
+                      <div>
+                        <p className="text-sotota-text font-medium">{exam.name}</p>
+                        <p className="text-sotota-muted text-sm">{exam.difficulty}</p>
                       </div>
-                      <p className="text-emerald-300 text-xs mt-2 font-semibold">{course.progress}% complete</p>
-                    </div>
+                      <p className="text-sotota-accent font-bold">{exam.score}</p>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
 
-                    <span className="text-emerald-400 font-bold text-lg">{course.category}</span>
+              {activeTab === 'certs' && (
+                <div>
+                  <h3 className="text-xl font-bold text-sotota-text mb-6">আপনার সার্টিফিকেট</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    {['বায়োলজি মাস্টার', 'কেমিস্ট্রি এক্সপার্ট'].map((cert, idx) => (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className="bg-sotota-card2 border border-sotota-accent border-opacity-50 rounded-lg p-4 text-center"
+                      >
+                        <FiCheckCircle className="mx-auto text-sotota-accent mb-2" size={32} />
+                        <p className="text-sotota-text font-medium text-sm">{cert}</p>
+                      </motion.div>
+                    ))}
                   </div>
-                </Link>
-              </motion.div>
-            ))}
+                </div>
+              )}
+            </motion.div>
           </div>
-        </motion.div>
+
+          {/* Right Panel - Mini Leaderboard & Streak */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="space-y-6"
+          >
+            {/* Leaderboard */}
+            <div className="bg-sotota-card border border-sotota-border rounded-lg p-6">
+              <h3 className="text-lg font-bold text-sotota-text mb-4">শীর্ষ ৩ জন</h3>
+              <div className="space-y-3">
+                {[
+                  { rank: '১', name: 'আহমেদ হাসান', score: '৩,২১০' },
+                  { rank: '२', name: 'ফাতিমা খান', score: '३,०৮৫' },
+                  { rank: '३', name: 'করিম সাহেব', score: '२,७८०' }
+                ].map((user, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="flex items-center gap-3"
+                  >
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${
+                      idx === 0 ? 'bg-sotota-gold' :
+                      idx === 1 ? 'bg-gray-400' :
+                      'bg-amber-600'
+                    }`}>
+                      {user.rank}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sotota-text text-sm font-medium">{user.name}</p>
+                    </div>
+                    <p className="text-sotota-accent font-bold text-sm">{user.score}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* Streak */}
+            <div className="bg-sotota-card border border-sotota-border rounded-lg p-6">
+              <h3 className="text-lg font-bold text-sotota-text mb-4">আপনার সপ্তাহ</h3>
+              <div className="grid grid-cols-7 gap-2">
+                {['বা', 'মঙ', 'বু', 'বৃ', 'শু', 'শ', 'র'].map((day, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className={`aspect-square rounded-lg flex items-center justify-center font-bold text-sm transition ${
+                      idx < 5
+                        ? 'bg-sotota-accent text-white'
+                        : 'bg-sotota-card2 text-sotota-muted'
+                    }`}
+                  >
+                    {day}
+                  </motion.div>
+                ))}
+              </div>
+              <p className="text-sotota-muted text-sm mt-4 text-center">৫ দিনের ধারাবাহিকতা চলছে! 🔥</p>
+            </div>
+          </motion.div>
+        </div>
       </div>
-    </div>
+    </DashboardLayout>
   )
 }
