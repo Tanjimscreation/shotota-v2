@@ -1,9 +1,6 @@
-import SignupForm from '@/components/auth/SignupForm'
+'use client'
 
-export const metadata = {
-  title: 'Sign Up - Shotota',
-  description: 'Create your Shotota account and start preparing for exams',
-}
+import SignupForm from '@/components/auth/SignupForm'
 
 export default function SignupPage() {
   return <SignupForm />

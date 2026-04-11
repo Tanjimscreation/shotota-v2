@@ -1,20 +1,21 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useState, Suspense } from 'react'
+import { useRouter } from 'next/navigation'
+import { useSearchParams as useSearchParamsOriginal } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 import Link from 'next/link'
-import { FiMail, FiLock, FiAlertCircle, FiCheckCircle } from 'react-icons/fi'
+import { FiMail, FiLock, FiAlertCircle } from 'react-icons/fi'
 
 interface LoginFormData {
   email: string
   password: string
 }
 
-export default function LoginForm() {
+function LoginFormInner() {
   const router = useRouter()
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParamsOriginal()
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
 
   const [loading, setLoading] = useState(false)
@@ -44,7 +45,6 @@ export default function LoginForm() {
         return
       }
 
-      // Redirect to callback URL or dashboard
       router.push(callbackUrl)
     } catch (err) {
       setError('An error occurred. Please try again.')
@@ -56,13 +56,11 @@ export default function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      {/* Header */}
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Welcome Back</h2>
         <p className="text-gray-600 text-sm mt-1">Sign in to your account</p>
       </div>
 
-      {/* Error Message */}
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-3">
           <FiAlertCircle className="text-red-600 mt-0.5 flex-shrink-0" />
@@ -70,7 +68,6 @@ export default function LoginForm() {
         </div>
       )}
 
-      {/* Email Field */}
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
           Email Address
@@ -95,7 +92,6 @@ export default function LoginForm() {
         {errors.email && <p className="text-red-600 text-xs mt-1">{errors.email.message}</p>}
       </div>
 
-      {/* Password Field */}
       <div>
         <div className="flex items-center justify-between mb-1">
           <label htmlFor="password" className="block text-sm font-medium text-gray-700">
@@ -125,7 +121,6 @@ export default function LoginForm() {
         {errors.password && <p className="text-red-600 text-xs mt-1">{errors.password.message}</p>}
       </div>
 
-      {/* Submit Button */}
       <button
         type="submit"
         disabled={loading}
@@ -134,7 +129,6 @@ export default function LoginForm() {
         {loading ? 'Signing in...' : 'Sign In'}
       </button>
 
-      {/* Signup Link */}
       <p className="text-center text-gray-600 text-sm">
         Don&apos;t have an account?{' '}
         <Link href="/auth/signup" className="text-blue-600 hover:text-blue-700 font-medium">
@@ -142,12 +136,19 @@ export default function LoginForm() {
         </Link>
       </p>
 
-      {/* Demo Credentials */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
         <p className="text-blue-900 text-xs">
           <strong>Demo Account:</strong> test@example.com / Test@2026
         </p>
       </div>
     </form>
+  )
+}
+
+export default function LoginForm() {
+  return (
+    <Suspense fallback={<div className="text-center py-8">Loading...</div>}>
+      <LoginFormInner />
+    </Suspense>
   )
 }

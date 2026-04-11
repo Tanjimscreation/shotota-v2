@@ -4,7 +4,7 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { FaMenu, FaTimes } from 'react-icons/fa'
+import { FaBars, FaTimes } from 'react-icons/fa'
 
 export const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -30,7 +30,7 @@ export const Navbar: React.FC = () => {
             <Link href="/leaderboard" className="hover:text-blue-600 transition">
               Leaderboard
             </Link>
-            <Link href="/login" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+            <Link href="/auth/login" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
               Login
             </Link>
           </div>
@@ -38,7 +38,7 @@ export const Navbar: React.FC = () => {
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center">
             <button onClick={toggleMenu} className="text-2xl">
-              {isOpen ? <FaTimes /> : <FaMenu />}
+              {isOpen ? <FaTimes /> : <FaBars />}
             </button>
           </div>
         </div>
@@ -52,7 +52,7 @@ export const Navbar: React.FC = () => {
             <Link href="/leaderboard" className="block py-2 hover:text-blue-600">
               Leaderboard
             </Link>
-            <Link href="/login" className="block py-2 px-4 bg-blue-600 text-white rounded text-center">
+            <Link href="/auth/login" className="block py-2 px-4 bg-blue-600 text-white rounded text-center">
               Login
             </Link>
           </div>

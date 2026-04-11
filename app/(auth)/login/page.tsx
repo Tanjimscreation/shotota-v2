@@ -1,9 +1,6 @@
-import LoginForm from '@/components/auth/LoginForm'
+'use client'
 
-export const metadata = {
-  title: 'Login - Shotota',
-  description: 'Sign in to your Shotota account',
-}
+import LoginForm from '@/components/auth/LoginForm'
 
 export default function LoginPage() {
   return <LoginForm />
