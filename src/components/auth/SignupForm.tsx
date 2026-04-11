@@ -77,8 +77,8 @@ export default function SignupForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {/* Header */}
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Create Account</h2>
-        <p className="text-gray-600 text-sm mt-1">Join thousands of students</p>
+        <h2 className="text-3xl font-black text-emerald-700 mb-2" style={{ fontFamily: '"Poppins", "Segoe UI", sans-serif' }}>নতুন অ্যাকাউন্ট তৈরি করুন</h2>
+        <p className="text-gray-600 text-sm font-medium" style={{ fontFamily: '"Poppins", "Segoe UI", sans-serif' }}>হাজারো শিক্ষার্থীর সাথে যোগ দিন</p>
       </div>
 
       {/* Error Message */}
@@ -99,8 +99,8 @@ export default function SignupForm() {
 
       {/* Name Field */}
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-          Full Name
+        <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2" style={{ fontFamily: '"Poppins", "Segoe UI", sans-serif' }}>
+          সম্পূর্ণ নাম
         </label>
         <div className="relative">
           <FiUser className="absolute left-3 top-3 text-gray-400" />
@@ -124,8 +124,8 @@ export default function SignupForm() {
 
       {/* Email Field */}
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-          Email Address
+        <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2" style={{ fontFamily: '"Poppins", "Segoe UI", sans-serif' }}>
+          ইমেইল ঠিকানা
         </label>
         <div className="relative">
           <FiMail className="absolute left-3 top-3 text-gray-400" />
@@ -149,8 +149,8 @@ export default function SignupForm() {
 
       {/* Password Field */}
       <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-          Password
+        <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2" style={{ fontFamily: '"Poppins", "Segoe UI", sans-serif' }}>
+          পাসওয়ার্ড
         </label>
         <div className="relative">
           <FiLock className="absolute left-3 top-3 text-gray-400" />
@@ -174,13 +174,13 @@ export default function SignupForm() {
           />
         </div>
         {errors.password && <p className="text-red-600 text-xs mt-1">{errors.password.message}</p>}
-        <p className="text-gray-500 text-xs mt-1">Min 8 chars, uppercase, lowercase, number</p>
+        <p className="text-gray-500 text-xs mt-1" style={{ fontFamily: '"Poppins", "Segoe UI", sans-serif' }}>কমপক্ষে ৮ অক্ষর, বড় অক্ষর, ছোট অক্ষর, সংখ্যা</p>
       </div>
 
       {/* Confirm Password Field */}
       <div>
-        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-          Confirm Password
+        <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-700 mb-2" style={{ fontFamily: '"Poppins", "Segoe UI", sans-serif' }}>
+          পাসওয়ার্ড নিশ্চিত করুন
         </label>
         <div className="relative">
           <FiLock className="absolute left-3 top-3 text-gray-400" />
@@ -205,15 +205,16 @@ export default function SignupForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 rounded-lg font-medium hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+        className="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white py-3 rounded-lg font-bold hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 text-base"
+        style={{ fontFamily: '"Poppins", "Segoe UI", sans-serif' }}
       >
-        {loading ? 'Creating Account...' : 'Create Account'}
+        {loading ? 'অ্যাকাউন্ট তৈরি করছি...' : 'অ্যাকাউন্ট তৈরি করুন'}
       </button>
 
       {/* Login Link */}
-      <p className="text-center text-gray-600 text-sm">
-        Already have an account?{' '}
-        <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+      <p className="text-center text-gray-600 text-sm font-medium" style={{ fontFamily: '"Poppins", "Segoe UI", sans-serif' }}>
+        ইতিমধ্যে অ্যাকাউন্ট আছে?{' '}
+        <Link href="/login" className="text-emerald-600 hover:text-emerald-700 font-bold">
           Login here
         </Link>
       </p>
