@@ -6,7 +6,6 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useParams, useRouter } from 'next/navigation'
 
 interface Course {
   id: string
@@ -21,10 +20,12 @@ interface Course {
   updatedAt: string
 }
 
-export default function CourseDetailPage() {
-  const params = useParams()
-  const router = useRouter()
-  const courseId = params?.id as string
+interface CourseDetailPageProps {
+  params: { id: string }
+}
+
+export default function CourseDetailPage({ params }: CourseDetailPageProps) {
+  const courseId = params.id
 
   const [course, setCourse] = useState<Course | null>(null)
   const [loading, setLoading] = useState(true)
@@ -37,7 +38,7 @@ export default function CourseDetailPage() {
         const res = await fetch(`/api/courses/${courseId}`)
 
         if (!res.ok) {
-          router.push('/courses')
+          setCourse(null)
           return
         }
 
@@ -45,7 +46,7 @@ export default function CourseDetailPage() {
         setCourse(data)
       } catch (error) {
         console.error('Failed to fetch course:', error)
-        router.push('/courses')
+        setCourse(null)
       } finally {
         setLoading(false)
       }
@@ -54,11 +55,11 @@ export default function CourseDetailPage() {
     if (courseId) {
       fetchCourse()
     }
-  }, [courseId, router])
+  }, [courseId])
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-green-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-teal-50 flex items-center justify-center">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1.5, repeat: Infinity }}
@@ -70,11 +71,11 @@ export default function CourseDetailPage() {
 
   if (!course) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-green-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-teal-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">কোর্স পাওয়া যায়নি</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Course Not Found</h2>
           <Link href="/courses" className="text-emerald-600 font-semibold hover:underline">
-            সকল কোর্স দেখুন
+            View All Courses
           </Link>
         </div>
       </div>
@@ -82,13 +83,13 @@ export default function CourseDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-green-50">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-teal-50">
       {/* Hero Section with Course Image */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="relative h-96 bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 overflow-hidden"
+        className="relative h-96 bg-gradient-to-br from-emerald-600 via-teal-500 to-green-600 overflow-hidden"
       >
         {course.thumbnail && (
           <Image
@@ -98,7 +99,7 @@ export default function CourseDetailPage() {
             className="object-cover opacity-40"
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/90 via-green-600/90 to-teal-600/90"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/90 via-teal-500/90 to-green-600/90"></div>
 
         {/* Back Button */}
         <div className="absolute top-6 left-6 z-10">
@@ -109,7 +110,7 @@ export default function CourseDetailPage() {
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            ফিরে যান
+            Back
           </Link>
         </div>
 
@@ -127,7 +128,7 @@ export default function CourseDetailPage() {
               <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight mb-4">
                 {course.title}
               </h1>
-              <p className="text-emerald-50 font-semibold text-lg">দ্বারা {course.instructor}</p>
+              <p className="text-emerald-50 font-semibold text-lg">by {course.instructor}</p>
             </motion.div>
           </div>
         </div>
@@ -147,7 +148,7 @@ export default function CourseDetailPage() {
             <section className="bg-white rounded-2xl p-8 shadow-lg border border-emerald-100 mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
                 <span className="w-1 h-8 bg-emerald-600 rounded-full"></span>
-                কোর্স সম্পর্কে
+                About This Course
               </h2>
               <p className="text-gray-700 leading-relaxed text-lg whitespace-pre-wrap">
                 {course.description}
@@ -158,29 +159,29 @@ export default function CourseDetailPage() {
             <section className="bg-white rounded-2xl p-8 shadow-lg border border-emerald-100">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
                 <span className="w-1 h-8 bg-green-600 rounded-full"></span>
-                কোর্স হাইলাইট
+                Course Highlights
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[
                   {
                     icon: '⏱️',
-                    label: 'সময়',
-                    value: `${course.duration} ঘন্টা`,
+                    label: 'Duration',
+                    value: `${course.duration} hours`,
                   },
                   {
                     icon: '📚',
-                    label: 'শ্রেণী',
+                    label: 'Category',
                     value: course.category,
                   },
                   {
                     icon: '👨‍🏫',
-                    label: 'প্রশিক্ষক',
+                    label: 'Instructor',
                     value: course.instructor,
                   },
                   {
                     icon: '🎓',
-                    label: 'সার্টিফিকেট',
-                    value: 'অন্তর্ভুক্ত',
+                    label: 'Certificate',
+                    value: 'Included',
                   },
                 ].map((item, index) => (
                   <motion.div
@@ -207,10 +208,10 @@ export default function CourseDetailPage() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="h-fit"
           >
-            <div className="bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl p-8 text-white shadow-xl sticky top-6">
+            <div className="bg-gradient-to-br from-emerald-500 via-teal-500 to-green-600 rounded-2xl p-8 text-white shadow-xl sticky top-20">
               {/* Price */}
               <div className="mb-6">
-                <p className="text-emerald-100 text-sm font-semibold mb-2">মূল্য</p>
+                <p className="text-emerald-100 text-sm font-semibold mb-2">PRICE</p>
                 <h3 className="text-4xl font-black">
                   ${course.price.toFixed(2)}
                 </h3>
@@ -225,16 +226,16 @@ export default function CourseDetailPage() {
                     : 'bg-white text-emerald-600 hover:bg-emerald-50'
                 }`}
               >
-                {enrolled ? '✓ নথিভুক্ত' : 'এখনই নথিভুক্ত হন'}
+                {enrolled ? '✓ Enrolled' : 'Enroll Now'}
               </button>
 
               {/* Features */}
               <div className="space-y-3 border-t border-emerald-400 pt-6">
                 {[
-                  'সারাজীবন অ্যাক্সেস',
-                  'ডাউনলোডযোগ্য সংস্থান',
-                  'সম্প্রদায় সহায়তা',
-                  'সার্টিফিকেট',
+                  'Lifetime access',
+                  'Downloadable resources',
+                  'Community support',
+                  'Certificate of completion',
                 ].map((feature, index) => (
                   <div key={index} className="flex items-center gap-3">
                     <svg className="w-5 h-5 text-emerald-200" fill="currentColor" viewBox="0 0 20 20">

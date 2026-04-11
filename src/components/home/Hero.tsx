@@ -56,14 +56,14 @@ export const Hero: React.FC = () => {
             className="px-8 py-3 bg-white text-emerald-600 font-bold rounded-lg hover:bg-emerald-50 transition shadow-lg hover:shadow-xl hover:scale-105"
             style={{ fontFamily: '"Poppins", "Segoe UI", sans-serif' }}
           >
-            কোর্স অন্বেষণ করুন
+            Explore Courses
           </Link>
           <Link
             href="/leaderboard"
             className="px-8 py-3 bg-white bg-opacity-20 text-white font-bold rounded-lg hover:bg-opacity-30 transition shadow-lg hover:shadow-xl hover:scale-105 border border-white border-opacity-50"
             style={{ fontFamily: '"Poppins", "Segoe UI", sans-serif' }}
           >
-            লিডারবোর্ড দেখুন
+            View Leaderboard
           </Link>
         </motion.div>
       </div>

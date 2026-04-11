@@ -60,7 +60,7 @@ export default function CoursesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-green-50">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 text-white py-16">
+      <div className="bg-gradient-to-br from-emerald-600 via-teal-500 to-green-600 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -68,10 +68,10 @@ export default function CoursesPage() {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-5xl md:text-6xl font-black mb-4 tracking-tight">
-              আমাদের কোর্সগুলি
+              Explore Courses
             </h1>
             <p className="text-xl text-emerald-50 font-medium">
-              বিশ্বমানের শিক্ষা শুরু করুন, আজই নথিভুক্ত হন
+              Master your skills with world-class education
             </p>
           </motion.div>
         </div>
@@ -89,7 +89,7 @@ export default function CoursesPage() {
           <div className="relative max-w-md">
             <input
               type="text"
-              placeholder="কোর্স অনুসন্ধান করুন..."
+              placeholder="Search courses..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value)
@@ -177,8 +177,8 @@ export default function CoursesPage() {
             className="text-center py-16"
           >
             <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">কোন কোর্স পাওয়া যায়নি</h3>
-            <p className="text-gray-600">আপনার অনুসন্ধানের সাথে মেলে এমন কোন কোর্স নেই।</p>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">No Courses Found</h3>
+            <p className="text-gray-600">No courses match your search. Try different keywords.</p>
           </motion.div>
         )}
       </div>

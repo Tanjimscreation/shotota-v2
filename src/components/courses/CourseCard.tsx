@@ -65,7 +65,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
 
             {/* Instructor */}
             <p className="text-sm text-gray-600 mb-3 font-medium">
-              দ্বারা {instructor}
+              by {instructor}
             </p>
 
             {/* Description */}
