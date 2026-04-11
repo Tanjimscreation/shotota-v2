@@ -6,14 +6,14 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("MONGODB_URI")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 // ============= USER MODELS =============
 
 model User {
-  id            String    @id @default(cuid()) @map("_id")
+  id            String    @id @default(cuid())
   email         String    @unique
   password      String
   name          String
@@ -21,6 +21,7 @@ model User {
   phone         String?
   avatar        String?
   bio           String?
+  batch         String?   // MBBS-2025, MBBS-2026, etc.
   
   // Relations
   enrollments   Enrollment[]
@@ -28,6 +29,7 @@ model User {
   uploads       Upload[]
   accounts      Account[]
   sessions      Session[]
+  leaderboardEntry LeaderboardEntry?
   
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -42,7 +44,7 @@ enum Role {
 
 // NextAuth Session Models
 model Account {
-  id                 String  @id @default(cuid()) @map("_id")
+  id                 String  @id @default(cuid())
   userId             String
   type               String
   provider           String
@@ -61,7 +63,7 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid()) @map("_id")
+  id           String   @id @default(cuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
@@ -69,7 +71,7 @@ model Session {
 }
 
 model VerificationToken {
-  id       String   @id @default(cuid()) @map("_id")
+  id       String   @id @default(cuid())
   email    String
   token    String   @unique
   expires  DateTime
@@ -80,14 +82,15 @@ model VerificationToken {
 // ============= COURSE MODELS =============
 
 model Course {
-  id            String    @id @default(cuid()) @map("_id")
+  id            String    @id @default(cuid())
   title         String
   description   String
-  price         Float
+  price         Float     @default(0)
   instructor    String
-  duration      Int       // in hours
+  duration      Int       // in weeks
   category      String
   thumbnail     String?
+  lessons       Int       @default(0)
   
   // Relations
   enrollments   Enrollment[]
@@ -101,15 +104,15 @@ model Course {
 }
 
 model Enrollment {
-  id            String    @id @default(cuid()) @map("_id")
+  id            String    @id @default(cuid())
   userId        String
   courseId      String
   
   // Payment Info
   paymentStatus PaymentStatus @default(PENDING)
-  bkashNumber   String
-  transactionId String
-  paymentProof  String
+  bkashNumber   String?   @default("")
+  transactionId String?   @default("")
+  paymentProof  String?   @default("")
   
   // Relations
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -133,14 +136,14 @@ enum PaymentStatus {
 // ============= EXAM MODELS =============
 
 model Exam {
-  id              String    @id @default(cuid()) @map("_id")
+  id              String    @id @default(cuid())
   courseId        String
   title           String
   description     String?
   duration        Int       // in minutes
   totalQuestions  Int
-  negativeMarking Float
-  passingScore    Float?
+  negativeMarking Float     @default(0)
+  passingScore    Float?    @default(60)
   
   // Relations
   course          Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
@@ -154,11 +157,15 @@ model Exam {
 }
 
 model Question {
-  id            String    @id @default(cuid()) @map("_id")
+  id            String    @id @default(cuid())
   examId        String
   questionText  String
-  options       Option[]
+  optionA       String
+  optionB       String
+  optionC       String
+  optionD       String
   correctAnswer String    // A, B, C, or D
+  explanation   String    // Bangla explanation
   order         Int
   
   // Relations
@@ -170,15 +177,10 @@ model Question {
   @@index([examId])
 }
 
-type Option {
-  label String // A, B, C, D
-  text  String
-}
-
 // ============= RESULT MODELS =============
 
 model ExamResult {
-  id              String    @id @default(cuid()) @map("_id")
+  id              String    @id @default(cuid())
   userId          String
   examId          String
   
@@ -189,8 +191,8 @@ model ExamResult {
   unattempted     Int
   score           Float
   percentage      Float
-  negativeMarks   Float
-  negativeMarkPercentage Float // (negativeMarks / totalQuestions) * 100
+  negativeMarks   Float     @default(0)
+  negativeMarkPercentage Float @default(0)
   
   // Time & Status
   timeTaken       Int       // in seconds
@@ -222,7 +224,7 @@ enum ExamStatus {
 // ============= UPLOAD MODELS =============
 
 model Upload {
-  id            String    @id @default(cuid()) @map("_id")
+  id            String    @id @default(cuid())
   userId        String
   filename      String
   originalName  String
@@ -241,18 +243,22 @@ model Upload {
 // ============= LEADERBOARD MODELS =============
 
 model LeaderboardEntry {
-  id            String    @id @default(cuid()) @map("_id")
+  id            String    @id @default(cuid())
   userId        String    @unique
   userName      String
-  totalScore    Float
-  examCount     Int
-  avgScore      Float
+  batch         String    @default("সবাই")
+  totalScore    Float     @default(0)
+  examCount     Int       @default(0)
+  avgScore      Float     @default(0)
   rank          Int
+  streak        Int       @default(0)
+  
+  user          User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
   @@index([rank])
   @@index([totalScore])
-  @@index([updatedAt])
+  @@index([batch])
 }
