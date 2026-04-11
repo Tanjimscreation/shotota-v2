@@ -1,7 +1,9 @@
 {
-  "buildCommand": "prisma generate && next build",
-  "installCommand": "npm ci",
+  "buildCommand": "npx prisma generate && npm run build",
+  "installCommand": "npm install",
   "env": {
-    "SKIP_ENV_VALIDATION": "true"
-  }
+    "SKIP_ENV_VALIDATION": "true",
+    "NODE_ENV": "production"
+  },
+  "nodeVersion": "20.x"
 }
