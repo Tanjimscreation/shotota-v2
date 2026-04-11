@@ -4,7 +4,58 @@ import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { FiHome } from 'react-icons/fi'
+import { FiHome, FiChevronDown } from 'react-icons/fi'
+import AnswerReview from '@/components/exam/AnswerReview'
+import PerformanceMetrics from '@/components/exam/PerformanceMetrics'
+
+// Mock questions with explanations
+const mockQuestionsWithExplanations = [
+  {
+    questionNumber: 1,
+    question: 'মানুষের শরীরে কয়টি হাড় আছে?',
+    options: ['১৮০', '২০৬', '২৫০', '৩০০'],
+    correctAnswerIndex: 1,
+    explanation:
+      'একজন প্রাপ্তবয়স্ক মানুষের শরীরে ২০৬টি হাড় থাকে। জন্মের সময় শিশুদের প্রায় ২৭০টি হাড় থাকে, কিন্তু বৃদ্ধির সাথে সাথে কিছু হাড় একত্রিত হয়ে ২০৬টিতে পরিণত হয়।'
+  },
+  {
+    questionNumber: 2,
+    question: 'হিমোগ্লোবিনের প্রধান কাজ কী?',
+    options: ['পুষ্টি সরবরাহ', 'অক্সিজেন পরিবহন', 'রোগ প্রতিরোধ', 'তাপমাত্রা নিয়ন্ত্রণ'],
+    correctAnswerIndex: 1,
+    explanation:
+      'হিমোগ্লোবিন লোহিত রক্তকণিকায় থাকে এবং ফুসফুস থেকে অক্সিজেন সংগ্রহ করে শরীরের সমস্ত কোষে পরিবহন করে। এটি একটি প্রোটিন যা আয়রন ধারণ করে যা অক্সিজেন বহনে সাহায্য করে।'
+  },
+  {
+    questionNumber: 3,
+    question: 'ডিএনএ-এর সম্পূর্ণ রূপ কী?',
+    options: [
+      'Deoxyribose Nucleic Acid',
+      'Deoxyribonucleic Acid',
+      'Dioxid Nucleic Acid',
+      'Deoxid Nucleotic Acid'
+    ],
+    correctAnswerIndex: 1,
+    explanation:
+      'DNA-এর সম্পূর্ণ রূপ Deoxyribonucleic Acid। এটি একটি জটিল জৈব অণু যা জীবন্ত প্রাণীদের মধ্যে জেনেটিক তথ্য বহন করে এবং সংরক্ষণ করে।'
+  },
+  {
+    questionNumber: 4,
+    question: 'মাইটোকন্ড্রিয়াকে কী বলা হয়?',
+    options: ['ঘুম কেন্দ্র', 'শক্তির কেন্দ্র', 'চিন্তার কেন্দ্র', 'স্মৃতির কেন্দ্র'],
+    correctAnswerIndex: 1,
+    explanation:
+      'মাইটোকন্ড্রিয়াকে কোষের "শক্তির কেন্দ্র" বা "পাওয়ার হাউস" বলা হয়। এটি ATP তৈরি করে যা কোষের সমস্ত কাজের জন্য শক্তি সরবরাহ করে।'
+  },
+  {
+    questionNumber: 5,
+    question: 'সবুজ উদ্ভিদ কী প্রক্রিয়ায় খাদ্য তৈরি করে?',
+    options: ['শ্বসন', 'প্রস্বেদন', 'সালোকসংশ্লেষণ', 'রূপান্তর'],
+    correctAnswerIndex: 2,
+    explanation:
+      'সালোকসংশ্লেষণ এমন একটি প্রক্রিয়া যেখানে সবুজ উদ্ভিদ সূর্যালোক, জল এবং কার্বন ডাইঅক্সাইড ব্যবহার করে গ্লুকোজ এবং অক্সিজেন তৈরি করে। এটি জীবনের জন্য অত্যন্ত গুরুত্বপূর্ণ কারণ এটি অক্সিজেন উৎপাদন করে।'
+  }
+]
 
 function ExamResultsContent() {
   const searchParams = useSearchParams()
@@ -12,11 +63,15 @@ function ExamResultsContent() {
   const score = parseInt(searchParams.get('score') || '0')
   const total = parseInt(searchParams.get('total') || '5')
   const [displayScore, setDisplayScore] = useState(0)
+  const [expandedReview, setExpandedReview] = useState(false)
 
   const percentage = Math.round((score / total) * 100)
   const isPassed = percentage >= 60
   const gradeLetters = ['F', 'D', 'C', 'B', 'A']
   const grade = gradeLetters[Math.floor(percentage / 20)]
+
+  // Mock student answers
+  const studentAnswers = [0, null, 1, 1, 2] // Some correct, some wrong/empty
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -41,15 +96,26 @@ function ExamResultsContent() {
     return 'পুনরায় চেষ্টা করুন'
   }
 
+  // Prepare answer review data
+  const answerReviewData = mockQuestionsWithExplanations.map((q, index) => ({
+    questionNumber: q.questionNumber,
+    question: q.question,
+    yourAnswerIndex: studentAnswers[index],
+    correctAnswerIndex: q.correctAnswerIndex,
+    explanation: q.explanation,
+    isCorrect: studentAnswers[index] === q.correctAnswerIndex,
+    questionOptions: q.options
+  }))
+
   return (
-    <div className="min-h-screen bg-sotota-bg flex items-center justify-center p-6">
+    <div className="min-h-screen bg-sotota-bg p-6">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-2xl"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-4xl mx-auto"
       >
-        {/* Result Card */}
-        <div className="bg-sotota-card border border-sotota-border rounded-lg p-8 md:p-12">
+        {/* Result Header Card */}
+        <div className="bg-sotota-card border border-sotota-border rounded-lg p-8 md:p-12 mb-8">
           {/* Icon */}
           <motion.div
             initial={{ scale: 0 }}
@@ -161,21 +227,6 @@ function ExamResultsContent() {
             </p>
           </motion.div>
 
-          {/* Answer Review - Coming Soon */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.4 }}
-            className="bg-sotota-card2 rounded-lg p-6 border border-sotota-border mb-8"
-          >
-            <h3 className="font-bold text-sotota-text mb-3">আপনার কর্মক্ষমতা</h3>
-            <div className="space-y-2 text-sm text-sotota-muted">
-              <p>📊 সঠিক উত্তর: <span className="text-sotota-accent font-semibold">{score}</span></p>
-              <p>❌ ভুল উত্তর: <span className="text-red-500 font-semibold">{total - score}</span></p>
-              <p>⏱️ সময় নেওয়া: <span className="font-semibold">4 মিনিট 32 সেকেন্ড</span></p>
-            </div>
-          </motion.div>
-
           {/* Buttons */}
           <div className="flex gap-4">
             <motion.button
@@ -198,6 +249,58 @@ function ExamResultsContent() {
             )}
           </div>
         </div>
+
+        {/* Tabs Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.6 }}
+          className="mt-8"
+        >
+          {/* Tab Navigation */}
+          <div className="flex gap-2 mb-6 border-b border-sotota-border">
+            {[
+              { id: 'performance', label: 'কর্মক্ষমতা' },
+              { id: 'answers', label: 'উত্তর পর্যালোচনা' }
+            ].map((tab) => (
+              <motion.button
+                key={tab.id}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setExpandedReview(tab.id === 'answers')}
+                className={`px-6 py-3 font-semibold transition border-b-2 ${
+                  (expandedReview && tab.id === 'answers') || (!expandedReview && tab.id === 'performance')
+                    ? 'text-sotota-accent border-sotota-accent'
+                    : 'text-sotota-muted border-transparent hover:text-sotota-text'
+                }`}
+              >
+                {tab.label}
+              </motion.button>
+            ))}
+          </div>
+
+          {/* Tab Content */}
+          {!expandedReview ? (
+            // Performance Metrics Tab
+            <div className="bg-sotota-card border border-sotota-border rounded-lg p-8">
+              <PerformanceMetrics
+                score={score}
+                total={total}
+                timeSpent="4 মিনিট 32 সেকেন্ড"
+                avgTimePerQuestion="54 সেকেন্ড"
+                difficulty="মাঝারি"
+                category="জীববিজ্ঞান"
+                previousScore={3}
+                improvement={score - 3}
+              />
+            </div>
+          ) : (
+            // Answer Review Tab
+            <div className="bg-sotota-card border border-sotota-border rounded-lg p-8">
+              <AnswerReview answers={answerReviewData} />
+            </div>
+          )}
+        </motion.div>
       </motion.div>
     </div>
   )
