@@ -19,7 +19,7 @@ export const Navbar: React.FC = () => {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-white shadow-md border-b border-emerald-100">
+    <nav className="sticky top-0 z-50 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 shadow-2xl border-b border-emerald-500 border-opacity-30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -27,7 +27,7 @@ export const Navbar: React.FC = () => {
             <motion.div
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
-              className="text-2xl font-black bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent"
+              className="text-2xl font-black bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent"
             >
               Shatota
             </motion.div>
@@ -37,13 +37,13 @@ export const Navbar: React.FC = () => {
           <div className="hidden md:flex items-center gap-8">
             <Link
               href="/courses"
-              className="text-gray-700 hover:text-emerald-600 font-semibold transition-colors"
+              className="text-emerald-200 hover:text-emerald-100 font-semibold transition-colors"
             >
               Courses
             </Link>
             <Link
               href="/leaderboard"
-              className="text-gray-700 hover:text-emerald-600 font-semibold transition-colors"
+              className="text-emerald-200 hover:text-emerald-100 font-semibold transition-colors"
             >
               Leaderboard
             </Link>
@@ -52,18 +52,18 @@ export const Navbar: React.FC = () => {
               <>
                 <Link
                   href="/dashboard"
-                  className="text-gray-700 hover:text-emerald-600 font-semibold transition-colors"
+                  className="text-emerald-200 hover:text-emerald-100 font-semibold transition-colors"
                 >
                   Dashboard
                 </Link>
-                <div className="flex items-center gap-3 pl-4 border-l border-emerald-200">
+                <div className="flex items-center gap-3 pl-4 border-l border-emerald-500 border-opacity-30">
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-gray-900">{session.user.name}</p>
-                    <p className="text-xs text-gray-600">{session.user.email}</p>
+                    <p className="text-sm font-semibold text-emerald-300">{session.user.name}</p>
+                    <p className="text-xs text-emerald-200">{session.user.email}</p>
                   </div>
                   <button
                     onClick={handleLogout}
-                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 font-semibold transition-colors"
+                    className="px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:shadow-lg hover:shadow-red-500/50 font-semibold transition-all"
                   >
                     Logout
                   </button>
@@ -73,13 +73,13 @@ export const Navbar: React.FC = () => {
               <>
                 <Link
                   href="/login"
-                  className="px-4 py-2 text-emerald-600 border border-emerald-600 rounded-lg hover:bg-emerald-50 font-semibold transition-colors"
+                  className="px-4 py-2 text-emerald-300 border-2 border-emerald-500 border-opacity-50 rounded-lg hover:border-opacity-100 hover:bg-slate-700 font-semibold transition-colors"
                 >
                   Login
                 </Link>
                 <Link
                   href="/signup"
-                  className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-lg hover:shadow-lg font-semibold transition-all"
+                  className="px-4 py-2 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white rounded-lg hover:shadow-lg hover:shadow-emerald-500/50 font-semibold transition-all"
                 >
                   Sign Up
                 </Link>
@@ -90,7 +90,7 @@ export const Navbar: React.FC = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden p-2 text-gray-700 hover:text-emerald-600"
+            className="md:hidden p-2 text-emerald-300 hover:text-emerald-100"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -109,18 +109,18 @@ export const Navbar: React.FC = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden border-t border-emerald-100 py-4 space-y-3"
+            className="md:hidden border-t border-emerald-500 border-opacity-30 py-4 space-y-3 bg-slate-800 bg-opacity-50"
           >
             <Link
               href="/courses"
-              className="block text-gray-700 hover:text-emerald-600 font-semibold transition-colors px-4 py-2"
+              className="block text-emerald-200 hover:text-emerald-100 font-semibold transition-colors px-4 py-2"
               onClick={() => setMenuOpen(false)}
             >
               Courses
             </Link>
             <Link
               href="/leaderboard"
-              className="block text-gray-700 hover:text-emerald-600 font-semibold transition-colors px-4 py-2"
+              className="block text-emerald-200 hover:text-emerald-100 font-semibold transition-colors px-4 py-2"
               onClick={() => setMenuOpen(false)}
             >
               Leaderboard
@@ -130,7 +130,7 @@ export const Navbar: React.FC = () => {
               <>
                 <Link
                   href="/dashboard"
-                  className="block text-gray-700 hover:text-emerald-600 font-semibold transition-colors px-4 py-2"
+                  className="block text-emerald-200 hover:text-emerald-100 font-semibold transition-colors px-4 py-2"
                   onClick={() => setMenuOpen(false)}
                 >
                   Dashboard
@@ -140,7 +140,7 @@ export const Navbar: React.FC = () => {
                     handleLogout()
                     setMenuOpen(false)
                   }}
-                  className="w-full text-left px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 font-semibold transition-colors"
+                  className="w-full text-left px-4 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg hover:shadow-lg font-semibold transition-all"
                 >
                   Logout
                 </button>
@@ -149,14 +149,14 @@ export const Navbar: React.FC = () => {
               <div className="space-y-2 px-4">
                 <Link
                   href="/login"
-                  className="block text-center px-4 py-2 text-emerald-600 border border-emerald-600 rounded-lg hover:bg-emerald-50 font-semibold transition-colors"
+                  className="block text-center px-4 py-2 text-emerald-300 border-2 border-emerald-500 border-opacity-50 rounded-lg hover:border-opacity-100 hover:bg-slate-700 font-semibold transition-colors"
                   onClick={() => setMenuOpen(false)}
                 >
                   Login
                 </Link>
                 <Link
                   href="/signup"
-                  className="block text-center px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-lg hover:shadow-lg font-semibold transition-all"
+                  className="block text-center px-4 py-2 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white rounded-lg hover:shadow-lg hover:shadow-emerald-500/50 font-semibold transition-all"
                   onClick={() => setMenuOpen(false)}
                 >
                   Sign Up
