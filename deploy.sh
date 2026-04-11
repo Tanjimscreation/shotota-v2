@@ -1,19 +1,14 @@
 #!/bin/bash
 
-echo "🚀 Deploying Shotota v2 to Vercel..."
+echo "🚀 Fast Deploy to Vercel..."
 
-# Kill any existing servers
-lsof -i :3000 -i :3001 -i :3002 -i :3003 | grep node | awk '{print $2}' | sort -u | xargs kill -9 2>/dev/null
-
-# Clean and build
-rm -rf .next
-npm run build
-
-# Deploy to Vercel
-echo "📦 Pushing to Vercel..."
+# Just push to git - Vercel auto-deploys
+echo "📤 Pushing code..."
+git add -A
+git commit -m "deploy: Production deployment" 2>/dev/null || true
 git push origin main
 
-# Use Vercel CLI
-npx vercel --prod --yes --name=shotota-v2
-
-echo "✅ Deployment complete!"
+echo "✅ Pushed! Vercel will auto-deploy..."
+echo "📊 Check deployment status:"
+echo "   https://vercel.com/dashboard"
+echo "   (auto-deployment starts in 30 seconds)"
