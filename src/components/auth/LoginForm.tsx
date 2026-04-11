@@ -86,6 +86,33 @@ export default function LoginForm() {
           <h2 className="text-3xl md:text-4xl font-bold text-sotota-text mb-2">আবার স্বাগতম!</h2>
           <p className="text-sotota-muted mb-8">আপনার শিক্ষার যাত্রা চালিয়ে যান</p>
 
+          {/* Demo Login Section */}
+          <div className="bg-sotota-accent/10 border border-sotota-accent rounded-lg p-4 mb-6">
+            <p className="text-xs font-semibold text-sotota-accent mb-3">ডেভেলপমেন্ট: দ্রুত লগইন করুন</p>
+            <div className="space-y-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail('rahim@shotota.com')
+                  setPassword('hashed_password_123')
+                }}
+                className="w-full text-left text-sm px-3 py-2 bg-sotota-card hover:bg-sotota-card2 rounded transition text-sotota-text"
+              >
+                👤 আবদুর রহিম (rahim@shotota.com)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail('test@test.com')
+                  setPassword('password')
+                }}
+                className="w-full text-left text-sm px-3 py-2 bg-sotota-card hover:bg-sotota-card2 rounded transition text-sotota-text"
+              >
+                👤 Test User (test@test.com)
+              </button>
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email Field */}
             <div>

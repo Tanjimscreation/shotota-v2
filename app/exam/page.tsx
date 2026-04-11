@@ -1,70 +1,89 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { motion } from 'framer-motion'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import ExamQuestion from '@/components/exam/ExamQuestion'
 import ExamTimer from '@/components/exam/ExamTimer'
 import NavigationDots from '@/components/exam/NavigationDots'
 import SubmitModal from '@/components/exam/SubmitModal'
+import { FiArrowLeft, FiAlertCircle } from 'react-icons/fi'
 
 interface Question {
   id: string
-  text: string
-  options: string[]
-  correctAnswer: number
+  questionText: string
+  optionA: string
+  optionB: string
+  optionC: string
+  optionD: string
+  correctAnswer: string
+  explanation: string
+  order: number
 }
 
-const mockExam: Question[] = [
-  {
-    id: '1',
-    text: 'মানুষের শরীরে কয়টি হাড় আছে?',
-    options: ['১৮০', '২০৬', '২৫০', '৩০০'],
-    correctAnswer: 1
-  },
-  {
-    id: '2',
-    text: 'হিমোগ্লোবিনের প্রধান কাজ কী?',
-    options: ['পুষ্টি সরবরাহ', 'অক্সিজেন পরিবহন', 'রোগ প্রতিরোধ', 'তাপমাত্রা নিয়ন্ত্রণ'],
-    correctAnswer: 1
-  },
-  {
-    id: '3',
-    text: 'ডিএনএ-এর সম্পূর্ণ রূপ কী?',
-    options: [
-      'Deoxyribose Nucleic Acid',
-      'Deoxyribonucleic Acid',
-      'Dioxid Nucleic Acid',
-      'Deoxid Nucleotic Acid'
-    ],
-    correctAnswer: 1
-  },
-  {
-    id: '4',
-    text: 'মাইটোকন্ড্রিয়াকে কী বলা হয়?',
-    options: ['ঘুম কেন্দ্র', 'শক্তির কেন্দ্র', 'চিন্তার কেন্দ্র', 'স্মৃতির কেন্দ্র'],
-    correctAnswer: 1
-  },
-  {
-    id: '5',
-    text: 'সবুজ উদ্ভিদ কী প্রক্রিয়ায় খাদ্য তৈরি করে?',
-    options: ['শ্বসন', 'প্রস্বেদন', 'সালোকসংশ্লেষণ', 'রূপান্তর'],
-    correctAnswer: 2
+interface Exam {
+  id: string
+  title: string
+  description: string
+  duration: number
+  totalQuestions: number
+  negativeMarking: number
+  passingScore: number
+  course: {
+    id: string
+    title: string
   }
-]
+}
 
-export default function ExamPage() {
+function ExamContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const examId = searchParams.get('id')
+
+  const [exam, setExam] = useState<Exam | null>(null)
+  const [questions, setQuestions] = useState<Question[]>([])
   const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [answers, setAnswers] = useState<(number | null)[]>(new Array(mockExam.length).fill(null))
-  const [timeLeft, setTimeLeft] = useState(10 * 60) // 10 minutes
+  const [answers, setAnswers] = useState<(string | null)[]>([])
+  const [timeLeft, setTimeLeft] = useState(0)
   const [showSubmitModal, setShowSubmitModal] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isExamActive, setIsExamActive] = useState(true)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSelectOption = (optionIndex: number) => {
+  // Load exam data
+  useEffect(() => {
+    if (!examId) {
+      setError('পরীক্ষা খুঁজে পাওয়া যায়নি')
+      setLoading(false)
+      return
+    }
+
+    const fetchExam = async () => {
+      try {
+        const response = await fetch(`/api/exams/${examId}`)
+        if (!response.ok) throw new Error('Failed to load exam')
+
+        const data = await response.json()
+        setExam(data.exam)
+        setQuestions(data.questions)
+        setTimeLeft(data.exam.duration * 60)
+        setAnswers(new Array(data.questions.length).fill(null))
+      } catch (err) {
+        setError('পরীক্ষা লোড করতে ব্যর্থ হয়েছে')
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchExam()
+  }, [examId])
+
+  const handleSelectOption = (option: string) => {
     const newAnswers = [...answers]
-    newAnswers[currentQuestion] = optionIndex
+    newAnswers[currentQuestion] = option
     setAnswers(newAnswers)
   }
 
@@ -73,7 +92,7 @@ export default function ExamPage() {
   }
 
   const handleNext = () => {
-    if (currentQuestion < mockExam.length - 1) {
+    if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1)
     }
   }
@@ -89,20 +108,60 @@ export default function ExamPage() {
   }
 
   const handleSubmitExam = async () => {
+    if (!exam) return
+
     setIsSubmitting(true)
-    // Simulate submission delay
-    setTimeout(() => {
-      // Calculate score
-      let score = 0
-      answers.forEach((answer, index) => {
-        if (answer === mockExam[index].correctAnswer) {
-          score++
-        }
+
+    // Calculate score
+    let correctAnswers = 0
+    let wrongAnswers = 0
+    let unattempted = 0
+
+    questions.forEach((question, index) => {
+      const userAnswer = answers[index]
+      const correctAnswer = question.correctAnswer
+
+      if (userAnswer === null) {
+        unattempted++
+      } else if (userAnswer === correctAnswer) {
+        correctAnswers++
+      } else {
+        wrongAnswers++
+      }
+    })
+
+    const score = correctAnswers - wrongAnswers * exam.negativeMarking
+    const percentage = Math.round((correctAnswers / questions.length) * 100)
+
+    try {
+      // Save exam result
+      const resultResponse = await fetch('/api/exams/results', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: 'user-id-placeholder', // This should come from session
+          examId: exam.id,
+          answers,
+          totalQuestions: questions.length,
+          correctAnswers,
+          wrongAnswers,
+          unattempted,
+          score,
+          percentage,
+          timeTaken: exam.duration * 60 - timeLeft,
+        }),
       })
 
+      if (!resultResponse.ok) throw new Error('Failed to save result')
+
       // Redirect to results page
-      router.push(`/exam-results?score=${score}&total=${mockExam.length}`)
-    }, 1500)
+      router.push(`/exam-results?examId=${exam.id}&score=${correctAnswers}&total=${questions.length}&percentage=${percentage}`)
+    } catch (err) {
+      console.error('Error submitting exam:', err)
+      setError('পরীক্ষা জমা দিতে ব্যর্থ হয়েছে')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleTimeUp = () => {
@@ -110,26 +169,74 @@ export default function ExamPage() {
     setShowSubmitModal(true)
   }
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-sotota-bg flex items-center justify-center">
+        <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }}>
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-sotota-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-sotota-text text-lg">পরীক্ষা লোড হচ্ছে...</p>
+          </div>
+        </motion.div>
+      </div>
+    )
+  }
+
+  if (error || !exam || questions.length === 0) {
+    return (
+      <div className="min-h-screen bg-sotota-bg flex items-center justify-center">
+        <div className="max-w-md">
+          <div className="bg-sotota-card border border-sotota-border rounded-lg p-8 text-center">
+            <FiAlertCircle className="w-16 h-16 mx-auto mb-4 text-sotota-error" />
+            <h1 className="text-2xl font-bold text-sotota-text mb-2">{error || 'পরীক্ষা খুঁজে পাওয়া যায়নি'}</h1>
+            <p className="text-sotota-muted mb-6">দয়া করে একটি বৈধ পরীক্ষা নির্বাচন করুন</p>
+            <Link
+              href="/courses"
+              className="inline-block px-6 py-3 rounded-lg bg-gradient-to-r from-sotota-accent to-sotota-accentd text-white font-semibold hover:shadow-lg transition"
+            >
+              কোর্সে ফিরুন
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const answeredQuestions = answers.filter((a) => a !== null).length
   const unansweredQuestions = answers
     .map((a, i) => (a === null ? i + 1 : null))
     .filter((q) => q !== null) as number[]
 
-  const question = mockExam[currentQuestion]
+  const question = questions[currentQuestion]
+
+  // Convert database options to array format for ExamQuestion component
+  const questionOptions = [question.optionA, question.optionB, question.optionC, question.optionD]
+  const optionLetters = ['A', 'B', 'C', 'D']
+  const selectedOptionIndex = answers[currentQuestion]
+    ? optionLetters.indexOf(answers[currentQuestion] as string)
+    : null
 
   return (
     <div className="min-h-screen bg-sotota-bg">
-      {/* Top Bar */}
-      <div className="sticky top-0 z-40 bg-sotota-surface border-b border-sotota-border">
+      {/* Back Button */}
+      <div className="sticky top-0 z-50 bg-sotota-surface border-b border-sotota-border">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <Link
+            href="/courses"
+            className="flex items-center gap-2 text-sotota-accent hover:text-sotota-accentl transition"
+          >
+            <FiArrowLeft className="w-5 h-5" />
+            <span>ফিরুন</span>
+          </Link>
+
           {/* Exam Title */}
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-            <h1 className="text-2xl font-bold text-sotota-text">জীববিজ্ঞান পরীক্ষা</h1>
-            <p className="text-sm text-sotota-muted">মোট প্রশ্ন: {mockExam.length}</p>
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex-1 text-center">
+            <h1 className="text-2xl font-bold text-sotota-text">{exam.title}</h1>
+            <p className="text-sm text-sotota-muted">{exam.course.title}</p>
           </motion.div>
 
           {/* Timer */}
-          <ExamTimer totalSeconds={10 * 60} onTimeUp={handleTimeUp} isActive={isExamActive} />
+          <ExamTimer totalSeconds={exam.duration * 60} onTimeUp={handleTimeUp} isActive={isExamActive} />
         </div>
       </div>
 
@@ -139,15 +246,55 @@ export default function ExamPage() {
           {/* Left - Question */}
           <motion.div className="lg:col-span-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div className="bg-sotota-card border border-sotota-border rounded-lg p-8">
-              <ExamQuestion
-                key={currentQuestion}
-                questionNumber={currentQuestion + 1}
-                totalQuestions={mockExam.length}
-                question={question.text}
-                options={question.options}
-                selectedOption={answers[currentQuestion]}
-                onSelectOption={handleSelectOption}
-              />
+              <div className="mb-8">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-bold text-sotota-text">প্রশ্ন {currentQuestion + 1}/{questions.length}</h2>
+                  <span className="text-sm text-sotota-muted">
+                    {exam.negativeMarking > 0 && `নেতিবাচক চিহ্ন: ${exam.negativeMarking}`}
+                  </span>
+                </div>
+
+                <p className="text-xl font-semibold text-sotota-text mb-6">{question.questionText}</p>
+
+                {/* Options */}
+                <div className="space-y-3">
+                  {questionOptions.map((option, index) => {
+                    const isSelected = selectedOptionIndex === index
+                    const letter = optionLetters[index]
+
+                    return (
+                      <motion.button
+                        key={index}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => handleSelectOption(letter)}
+                        className={`w-full p-4 rounded-lg border-2 text-left font-semibold transition ${
+                          isSelected
+                            ? 'border-sotota-accent bg-sotota-accent/10 text-sotota-accent'
+                            : 'border-sotota-border text-sotota-text hover:border-sotota-accent/50'
+                        }`}
+                      >
+                        <span className="inline-block w-8 h-8 rounded-full border-2 border-current flex items-center justify-center mr-4">
+                          {letter}
+                        </span>
+                        {option}
+                      </motion.button>
+                    )
+                  })}
+                </div>
+
+                {/* Explanation */}
+                {selectedOptionIndex !== null && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-6 p-4 rounded-lg bg-sotota-card2 border border-sotota-border"
+                  >
+                    <p className="text-sm text-sotota-muted mb-2">ব্যাখ্যা:</p>
+                    <p className="text-sotota-text">{question.explanation}</p>
+                  </motion.div>
+                )}
+              </div>
 
               {/* Navigation Buttons */}
               <div className="mt-8 flex gap-4">
@@ -165,7 +312,7 @@ export default function ExamPage() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleNext}
-                  disabled={currentQuestion === mockExam.length - 1}
+                  disabled={currentQuestion === questions.length - 1}
                   className="px-6 py-3 rounded-lg border border-sotota-border text-sotota-text font-semibold hover:bg-sotota-card2 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   পরবর্তী →
@@ -191,11 +338,11 @@ export default function ExamPage() {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-sotota-muted">উত্তর দেওয়া হয়েছে</span>
-                  <span className="sotota-stat font-bold text-sotota-accent">{answeredQuestions}/{mockExam.length}</span>
+                  <span className="sotota-stat font-bold text-sotota-accent">{answeredQuestions}/{questions.length}</span>
                 </div>
                 <div className="w-full h-2 bg-sotota-card2 rounded-full overflow-hidden">
                   <motion.div
-                    animate={{ width: `${(answeredQuestions / mockExam.length) * 100}%` }}
+                    animate={{ width: `${(answeredQuestions / questions.length) * 100}%` }}
                     transition={{ duration: 0.3 }}
                     className="h-full bg-gradient-to-r from-sotota-accent to-sotota-accentl"
                   />
@@ -206,14 +353,25 @@ export default function ExamPage() {
             {/* Navigation Dots */}
             <div className="bg-sotota-card border border-sotota-border rounded-lg p-6">
               <h3 className="font-bold text-sotota-text mb-4">প্রশ্নগুলি</h3>
-              <NavigationDots
-                total={mockExam.length}
-                current={currentQuestion}
-                answered={answers
-                  .map((a, i) => (a !== null ? i : null))
-                  .filter((i) => i !== null) as number[]}
-                onDotClick={handleNavigateQuestion}
-              />
+              <div className="grid grid-cols-5 gap-2">
+                {answers.map((answer, index) => {
+                  let bgColor = 'bg-sotota-card2'
+                  if (answer !== null) bgColor = 'bg-sotota-accent'
+                  if (index === currentQuestion) bgColor = 'bg-sotota-accentl ring-2 ring-sotota-accent'
+
+                  return (
+                    <motion.button
+                      key={index}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => handleNavigateQuestion(index)}
+                      className={`aspect-square rounded-lg ${bgColor} text-sotota-text font-bold transition`}
+                    >
+                      {index + 1}
+                    </motion.button>
+                  )
+                })}
+              </div>
             </div>
 
             {/* Instructions */}
@@ -222,7 +380,8 @@ export default function ExamPage() {
               <ul className="space-y-2 text-sm text-sotota-muted">
                 <li>✓ প্রতিটি প্রশ্নের একটি সঠিক উত্তর আছে</li>
                 <li>✓ আপনি যেকোনো সময় উত্তর পরিবর্তন করতে পারেন</li>
-                <li>✓ সময় শেষ হলে পরীক্ষা স্বয়ংক্রিয়ভাবে জমা হবে</li>
+                <li>✓ সময় শেষ হলে পরীক্ষা স্বয়ংক্রিয় জমা হবে</li>
+                {exam.negativeMarking > 0 && <li>⚠ ভুল উত্তরে {exam.negativeMarking} চিহ্ন কাটা যাবে</li>}
               </ul>
             </div>
           </motion.div>
@@ -232,7 +391,7 @@ export default function ExamPage() {
       {/* Submit Modal */}
       <SubmitModal
         isOpen={showSubmitModal}
-        totalQuestions={mockExam.length}
+        totalQuestions={questions.length}
         answeredQuestions={answeredQuestions}
         unansweredQuestions={unansweredQuestions}
         onSubmit={handleSubmitExam}
@@ -240,5 +399,21 @@ export default function ExamPage() {
         isSubmitting={isSubmitting}
       />
     </div>
+  )
+}
+export default function ExamPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-sotota-bg flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-sotota-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-sotota-text">পরীক্ষা লোড হচ্ছে...</p>
+          </div>
+        </div>
+      }
+    >
+      <ExamContent />
+    </Suspense>
   )
 }
