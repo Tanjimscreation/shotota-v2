@@ -63,7 +63,7 @@ export const Hero: React.FC = () => {
       {/* Content */}
       <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
         <motion.h1
-          className="text-6xl md:text-7xl font-black text-white mb-2 tracking-tight"
+          className="text-6xl md:text-7xl font-black text-white mb-8 tracking-tight"
           style={{ fontFamily: '"Poppins", "Segoe UI", sans-serif' }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -71,23 +71,6 @@ export const Hero: React.FC = () => {
         >
           সততা
         </motion.h1>
-        
-        <motion.div
-          className="h-1 w-24 bg-white rounded-full mx-auto mb-6"
-          initial={{ opacity: 0, width: 0 }}
-          animate={{ opacity: 1, width: 96 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        />
-
-        <motion.h2
-          className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-wide"
-          style={{ fontFamily: '"Poppins", "Segoe UI", sans-serif' }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1 }}
-        >
-          আপনার পরীক্ষায় আয়ত্ত করুন
-        </motion.h2>
 
         <motion.p
           className="text-lg md:text-xl text-emerald-50 mb-8 font-medium max-w-2xl mx-auto leading-relaxed"
@@ -103,7 +86,7 @@ export const Hero: React.FC = () => {
           className="flex flex-col sm:flex-row gap-4 justify-center"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
         >
           <Link
             href="/courses"
