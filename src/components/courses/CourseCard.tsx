@@ -1,104 +1,142 @@
-// src/components/courses/CourseCard.tsx
-
 'use client'
 
-import React from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { FiLock, FiCheckCircle, FiPlay } from 'react-icons/fi'
 
 interface CourseCardProps {
   id: string
   title: string
   description: string
-  thumbnail?: string
+  thumbnail: string
   instructor: string
+  progress: number
+  enrolled: boolean
+  locked: boolean
   category: string
-  duration: number
-  price: number
+  lessons: number
+  onEnroll?: () => void
+  onStart?: () => void
 }
 
-export const CourseCard: React.FC<CourseCardProps> = ({
+export default function CourseCard({
   id,
   title,
   description,
   thumbnail,
   instructor,
+  progress,
+  enrolled,
+  locked,
   category,
-  duration,
-  price,
-}) => {
+  lessons,
+  onEnroll,
+  onStart
+}: CourseCardProps) {
+  const [isHovered, setIsHovered] = useState(false)
+
   return (
     <motion.div
-      whileHover={{ y: -8 }}
-      transition={{ duration: 0.3 }}
-      className="h-full"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4 }}
+      className="relative"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      <Link href={`/courses/${id}`}>
-        <div className="group h-full bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden border border-emerald-100 cursor-pointer">
-          {/* Thumbnail */}
-          <div className="relative w-full h-48 bg-gradient-to-br from-emerald-500 to-green-600 overflow-hidden">
-            {thumbnail ? (
-              <Image
-                src={thumbnail}
-                alt={title}
-                fill
-                className="object-cover group-hover:scale-110 transition-transform duration-300"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <div className="text-white text-sm font-medium opacity-50">No Image</div>
-              </div>
-            )}
-            {/* Category Badge */}
-            <div className="absolute top-3 right-3 bg-emerald-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+      <div className={`bg-sotota-card border border-sotota-border rounded-lg overflow-hidden transition ${
+        locked ? 'opacity-60' : ''
+      }`}>
+        {/* Image */}
+        <div className="relative h-40 bg-gradient-to-br from-sotota-accent to-sotota-accentd overflow-hidden">
+          <motion.div
+            initial={{ scale: 1 }}
+            animate={{ scale: isHovered && !locked ? 1.05 : 1 }}
+            transition={{ duration: 0.3 }}
+            className="w-full h-full flex items-center justify-center text-white text-sm font-bold"
+          >
+            {thumbnail}
+          </motion.div>
+
+          {/* Lock Badge */}
+          {locked && (
+            <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+              <FiLock className="text-white" size={40} />
+            </div>
+          )}
+
+          {/* Category Badge */}
+          <div className="absolute top-3 left-3">
+            <span className="bg-sotota-accent text-white text-xs font-bold px-3 py-1 rounded-full">
               {category}
-            </div>
+            </span>
           </div>
 
-          {/* Content */}
-          <div className="p-5 flex flex-col h-[calc(100%-192px)]">
-            {/* Title */}
-            <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-emerald-600 transition-colors">
-              {title}
-            </h3>
-
-            {/* Instructor */}
-            <p className="text-sm text-gray-600 mb-3 font-medium">
-              by {instructor}
-            </p>
-
-            {/* Description */}
-            <p className="text-sm text-gray-600 mb-4 line-clamp-2 flex-grow">
-              {description}
-            </p>
-
-            {/* Footer Stats */}
-            <div className="flex items-center justify-between pt-4 border-t border-emerald-100">
-              {/* Duration */}
-              <div className="flex items-center gap-1 text-xs font-semibold text-gray-700">
-                <svg
-                  className="w-4 h-4 text-emerald-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 11-2 0V9.5a1 1 0 112 0V7z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                {duration}h
-              </div>
-
-              {/* Price */}
-              <div className="text-lg font-bold text-emerald-600">
-                ${price.toFixed(2)}
-              </div>
+          {/* Progress Badge */}
+          {enrolled && progress > 0 && (
+            <div className="absolute top-3 right-3">
+              <span className="bg-white text-sotota-bg text-xs font-bold px-3 py-1 rounded-full sotota-stat">
+                {progress}%
+              </span>
             </div>
-          </div>
+          )}
         </div>
-      </Link>
+
+        {/* Content */}
+        <div className="p-5">
+          <h3 className="text-lg font-bold text-sotota-text mb-2 line-clamp-2">{title}</h3>
+          <p className="text-sotota-muted text-sm mb-3 line-clamp-2">{description}</p>
+
+          {/* Meta */}
+          <div className="flex justify-between items-center text-xs text-sotota-muted mb-4">
+            <span>শিক্ষক: {instructor}</span>
+            <span>📚 {lessons} পাঠ</span>
+          </div>
+
+          {/* Progress Bar */}
+          {enrolled && progress > 0 && (
+            <div className="mb-4">
+              <div className="w-full h-2 bg-sotota-card2 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                  className="h-full bg-gradient-to-r from-sotota-accent to-sotota-accentl"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Button */}
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={enrolled ? onStart : onEnroll}
+            disabled={locked}
+            className={`w-full py-2.5 rounded-lg font-semibold transition flex items-center justify-center gap-2 ${
+              locked
+                ? 'bg-sotota-card2 text-sotota-muted cursor-not-allowed'
+                : enrolled
+                ? 'bg-sotota-accent text-white hover:bg-sotota-accentl'
+                : 'bg-sotota-card2 text-sotota-accent border border-sotota-accent hover:bg-sotota-accent hover:text-white'
+            }`}
+          >
+            {locked ? (
+              <>
+                <FiLock size={16} /> লক করা
+              </>
+            ) : enrolled ? (
+              <>
+                <FiPlay size={16} /> চালু করুন
+              </>
+            ) : (
+              <>
+                <FiCheckCircle size={16} /> নথিভুক্ত হন
+              </>
+            )}
+          </motion.button>
+        </div>
+      </div>
     </motion.div>
   )
 }
