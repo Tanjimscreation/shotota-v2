@@ -1,26 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Syne:wght@700;800&display=swap');
+
 @import "tailwindcss";
 
+/* Shatota Color Palette */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --sotota-bg: #0A1F10;
+  --sotota-surface: #0F2818;
+  --sotota-card: #112B1A;
+  --sotota-card2: #0D2216;
+  --sotota-accent: #1DB954;
+  --sotota-accentl: #2EE066;
+  --sotota-accentd: #0F8C3A;
+  --sotota-red: #C0392B;
+  --sotota-redb: #E74C3C;
+  --sotota-border: rgba(29, 185, 84, 0.15);
+  --sotota-borderl: rgba(29, 185, 84, 0.30);
+  --sotota-text: #E8F5EE;
+  --sotota-muted: #7CB899;
+  --sotota-dim: #4A7A5E;
+  --sotota-gold: #F0B429;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  font-family: 'Hind Siliguri', sans-serif;
+  font-size: 15px;
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--sotota-bg);
+  color: var(--sotota-text);
+  font-family: 'Hind Siliguri', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Hind Siliguri', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Numbers/Scores use Syne */
+.sotota-stat {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+@theme inline {
+  --color-sotota-bg: var(--sotota-bg);
+  --color-sotota-surface: var(--sotota-surface);
+  --color-sotota-card: var(--sotota-card);
+  --color-sotota-card2: var(--sotota-card2);
+  --color-sotota-accent: var(--sotota-accent);
+  --color-sotota-accentl: var(--sotota-accentl);
+  --color-sotota-accentd: var(--sotota-accentd);
+  --color-sotota-red: var(--sotota-red);
+  --color-sotota-redb: var(--sotota-redb);
+  --color-sotota-text: var(--sotota-text);
+  --color-sotota-muted: var(--sotota-muted);
+  --color-sotota-dim: var(--sotota-dim);
+  --color-sotota-gold: var(--sotota-gold);
+}
+
+/* Smooth scrolling */
+@supports (scroll-behavior: smooth) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Selection color */
+::selection {
+  background-color: var(--sotota-accent);
+  color: var(--sotota-bg);
 }
