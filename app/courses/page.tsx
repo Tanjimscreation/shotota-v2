@@ -58,9 +58,11 @@ export default function CoursesPage() {
   }, [search, currentPage])
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-green-50">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
       {/* Header Section */}
-      <div className="bg-gradient-to-br from-emerald-600 via-teal-500 to-green-600 text-white py-20">
+      <div className="bg-gradient-to-br from-emerald-700 via-teal-600 to-cyan-700 text-white py-20 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-emerald-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-teal-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: -20 }}

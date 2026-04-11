@@ -59,11 +59,11 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-teal-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1.5, repeat: Infinity }}
-          className="w-12 h-12 border-4 border-emerald-600 border-t-transparent rounded-full"
+          className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full"
         />
       </div>
     )
@@ -71,10 +71,10 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
 
   if (!course) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-teal-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Course Not Found</h2>
-          <Link href="/courses" className="text-emerald-600 font-semibold hover:underline">
+          <h2 className="text-2xl font-bold text-emerald-300 mb-4">Course Not Found</h2>
+          <Link href="/courses" className="text-teal-400 font-semibold hover:text-teal-300 transition">
             View All Courses
           </Link>
         </div>
@@ -83,13 +83,13 @@ export default function CourseDetailPage({ params }: CourseDetailPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-teal-50">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
       {/* Hero Section with Course Image */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
-        className="relative h-96 bg-gradient-to-br from-emerald-600 via-teal-500 to-green-600 overflow-hidden"
+        className="relative h-96 bg-gradient-to-br from-emerald-700 via-teal-600 to-cyan-700 overflow-hidden"
       >
         {course.thumbnail && (
           <Image
