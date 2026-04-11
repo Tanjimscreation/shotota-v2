@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { FiAward, FiTrendingUp } from 'react-icons/fi'
+import { DashboardLayout } from '@/components/DashboardLayout'
 
 interface LeaderboardEntry {
   id: string
@@ -48,7 +49,8 @@ export default function CertificatesPage() {
   const filteredEntries = selectedBatch ? entries.filter((e) => e.batch === selectedBatch) : entries
 
   return (
-    <div className="min-h-screen bg-sotota-bg">
+    <DashboardLayout>
+      <div className="min-h-screen bg-sotota-bg">
       {/* Header */}
       <div className="bg-gradient-to-r from-sotota-accent to-sotota-accentd py-12 px-6">
         <div className="max-w-6xl mx-auto">
@@ -181,5 +183,6 @@ export default function CertificatesPage() {
         </div>
       </div>
     </div>
+    </DashboardLayout>
   )
 }

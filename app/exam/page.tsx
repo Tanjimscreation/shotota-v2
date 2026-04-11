@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { DashboardLayout } from '@/components/DashboardLayout'
 import ExamQuestion from '@/components/exam/ExamQuestion'
 import ExamTimer from '@/components/exam/ExamTimer'
 import NavigationDots from '@/components/exam/NavigationDots'
@@ -403,17 +404,19 @@ function ExamContent() {
 }
 export default function ExamPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-sotota-bg flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-16 h-16 border-4 border-sotota-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-sotota-text">পরীক্ষা লোড হচ্ছে...</p>
+    <DashboardLayout>
+      <Suspense
+        fallback={
+          <div className="min-h-screen bg-sotota-bg flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-16 h-16 border-4 border-sotota-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+              <p className="text-sotota-text">পরীক্ষা লোড হচ্ছে...</p>
+            </div>
           </div>
-        </div>
-      }
-    >
-      <ExamContent />
-    </Suspense>
+        }
+      >
+        <ExamContent />
+      </Suspense>
+    </DashboardLayout>
   )
 }

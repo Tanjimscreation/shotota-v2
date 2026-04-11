@@ -57,7 +57,11 @@ export async function POST(req: NextRequest) {
     // Return success even if save fails, to not break the exam flow
     return NextResponse.json({
       id: 'result-' + Date.now(),
-      ...body,
+      userId: '',
+      examId: '',
+      score: 0,
+      percentage: 0,
+      status: 'COMPLETED',
     }, { status: 201 })
   }
 }

@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { FiBook, FiCheckCircle, FiTrendingUp, FiAward, FiZap } from 'react-icons/fi'
+import Link from 'next/link'
+import { FiBook, FiCheckCircle, FiTrendingUp, FiAward, FiZap, FiSettings } from 'react-icons/fi'
 import { DashboardLayout } from '@/components/DashboardLayout'
 
 export default function DashboardPage() {
@@ -74,6 +75,23 @@ export default function DashboardPage() {
   return (
     <DashboardLayout>
       <div className="max-w-7xl mx-auto">
+        {/* Admin Panel Link - Only show for admins */}
+        {(session?.user as any)?.role === 'ADMIN' && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6"
+          >
+            <Link
+              href="/admin"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-sotota-accent/10 border border-sotota-accent rounded-lg text-sotota-accent hover:bg-sotota-accent hover:text-white transition font-semibold"
+            >
+              <FiSettings size={18} />
+              অ্যাডমিন প্যানেলে যান
+            </Link>
+          </motion.div>
+        )}
+
         {/* Stats Row */}
         <motion.div
           initial={{ opacity: 0 }}

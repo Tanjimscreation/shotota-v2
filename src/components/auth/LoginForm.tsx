@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
@@ -12,19 +12,41 @@ import Link from 'next/link'
 
 export default function LoginForm() {
   const router = useRouter()
+  const submitTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Prevent multiple submissions
+    if (isSubmitting || loading) {
+      return
+    }
+
+    // Clear any pending timeouts
+    if (submitTimeoutRef.current) {
+      clearTimeout(submitTimeoutRef.current)
+    }
+
+    setIsSubmitting(true)
     setLoading(true)
     setError('')
 
     try {
+      // Validate inputs
+      if (!email.trim() || !password.trim()) {
+        setError('ইমেইল এবং পাসওয়ার্ড উভয় প্রয়োজন')
+        setLoading(false)
+        setIsSubmitting(false)
+        return
+      }
+
       const result = await signIn('credentials', {
         email,
         password,
@@ -33,24 +55,40 @@ export default function LoginForm() {
 
       if (result?.error) {
         setError('ইমেইল বা পাসওয়ার্ড ভুল')
+        setLoading(false)
+        setIsSubmitting(false)
       } else if (result?.ok) {
-        router.push('/dashboard')
+        // Add delay to ensure session is set before redirect
+        submitTimeoutRef.current = setTimeout(() => {
+          router.push('/dashboard')
+          setLoading(false)
+          setIsSubmitting(false)
+        }, 500)
+      } else {
+        setError('কিছু সমস্যা হয়েছে। পুনরায় চেষ্টা করুন।')
+        setLoading(false)
+        setIsSubmitting(false)
       }
-    } catch {
+    } catch (err) {
       setError('কিছু সমস্যা হয়েছে। পুনরায় চেষ্টা করুন।')
-    } finally {
       setLoading(false)
+      setIsSubmitting(false)
     }
   }
 
   const handleGoogleSignIn = async () => {
+    if (isSubmitting || loading) {
+      return
+    }
+    
+    setIsSubmitting(true)
     setLoading(true)
     try {
       await signIn('google', { callbackUrl: '/dashboard' })
     } catch {
       setError('Google দিয়ে সাইন ইন করতে ব্যর্থ')
-    } finally {
       setLoading(false)
+      setIsSubmitting(false)
     }
   }
 

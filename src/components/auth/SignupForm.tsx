@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { FiMail, FiLock, FiUser, FiPhone, FiEye, FiEyeOff } from 'react-icons/fi'
@@ -18,6 +18,7 @@ const BATCHES = [
 
 export default function SignupForm() {
   const router = useRouter()
+  const submitTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const [fullName, setFullName] = useState('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
@@ -28,33 +29,55 @@ export default function SignupForm() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Prevent multiple submissions
+    if (isSubmitting || loading) {
+      return
+    }
+
+    // Clear any pending timeouts
+    if (submitTimeoutRef.current) {
+      clearTimeout(submitTimeoutRef.current)
+    }
+
     setError('')
+    setIsSubmitting(true)
+    setLoading(true)
 
     if (!fullName.trim()) {
       setError('পুরো নাম প্রয়োজন')
+      setLoading(false)
+      setIsSubmitting(false)
       return
     }
     if (!phone.trim()) {
       setError('ফোন নম্বর প্রয়োজন')
+      setLoading(false)
+      setIsSubmitting(false)
       return
     }
     if (!email.trim()) {
       setError('ইমেইল প্রয়োজন')
+      setLoading(false)
+      setIsSubmitting(false)
       return
     }
     if (password !== confirmPassword) {
       setError('পাসওয়ার্ড মিলছে না')
+      setLoading(false)
+      setIsSubmitting(false)
       return
     }
     if (password.length < 6) {
       setError('পাসওয়ার্ড কমপক্ষে ६ অক্ষর দীর्घ হতে হবে')
+      setLoading(false)
+      setIsSubmitting(false)
       return
     }
-
-    setLoading(true)
 
     try {
       const response = await fetch('/api/auth/signup', {
@@ -67,14 +90,21 @@ export default function SignupForm() {
 
       if (!response.ok) {
         setError(result.error || 'অ্যাকাউন্ট তৈরি করতে ব্যর্থ')
+        setLoading(false)
+        setIsSubmitting(false)
         return
       }
 
-      router.push('/login?success=true')
+      // Add delay to ensure signup is complete before redirect
+      submitTimeoutRef.current = setTimeout(() => {
+        router.push('/login?success=true')
+        setLoading(false)
+        setIsSubmitting(false)
+      }, 500)
     } catch {
       setError('কিছু সমস्যা হয়েছে। পুনরায় চেষ্টা করুন।')
-    } finally {
       setLoading(false)
+      setIsSubmitting(false)
     }
   }
 
