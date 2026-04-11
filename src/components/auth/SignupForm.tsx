@@ -63,7 +63,7 @@ export default function SignupForm() {
 
       setSuccess('Account created successfully! Redirecting to login...')
       setTimeout(() => {
-        router.push('/auth/login')
+        router.push('/login')
       }, 2000)
     } catch (err) {
       setError('An error occurred. Please try again.')
@@ -213,7 +213,7 @@ export default function SignupForm() {
       {/* Login Link */}
       <p className="text-center text-gray-600 text-sm">
         Already have an account?{' '}
-        <Link href="/auth/login" className="text-blue-600 hover:text-blue-700 font-medium">
+        <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">
           Login here
         </Link>
       </p>

@@ -12,9 +12,9 @@ export const Navbar: React.FC = () => {
   const toggleMenu = () => setIsOpen(!isOpen)
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
+    <nav className="bg-white shadow-md sticky top-0 z-50" suppressHydrationWarning>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <div className="flex justify-between h-16" suppressHydrationWarning>
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="text-2xl font-bold text-blue-600">
@@ -30,7 +30,7 @@ export const Navbar: React.FC = () => {
             <Link href="/leaderboard" className="hover:text-blue-600 transition">
               Leaderboard
             </Link>
-            <Link href="/auth/login" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+            <Link href="/login" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
               Login
             </Link>
           </div>
