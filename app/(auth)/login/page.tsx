@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { FiShield, FiBook, FiArrowRight } from 'react-icons/fi'
 import Link from 'next/link'
-import LoginFormComponent from '@/components/auth/LoginForm'
+import LoginForm from '@/components/auth/LoginForm'
 
 export default function LoginPage() {
   const [selectedRole, setSelectedRole] = useState<'admin' | 'student' | null>(null)
@@ -31,7 +31,7 @@ export default function LoginPage() {
   ]
 
   if (selectedRole) {
-    return <LoginFormComponent role={selectedRole} onBack={() => setSelectedRole(null)} />
+    return <LoginForm role={selectedRole} onBack={() => setSelectedRole(null)} />
   }
 
   return (
