@@ -91,9 +91,9 @@ export default function LoginForm({
             <FiArrowLeft /> ফিরে যান
           </button>
 
-          <div className="bg-white rounded-2xl shadow-2xl p-8">
-            <h1 className="text-3xl font-bold text-sotota-dark mb-2">{roleTitle}</h1>
-            <p className="text-gray-600 mb-8">{roleSubtitle}</p>
+          <div className="bg-white rounded-2xl shadow-2xl p-8 border-2 border-gray-100">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{roleTitle}</h1>
+            <p className="text-gray-700 mb-8 font-medium">{roleSubtitle}</p>
 
             {error && (
               <motion.div
@@ -107,54 +107,54 @@ export default function LoginForm({
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">ইমেইল</label>
+                <label className="block text-sm font-bold text-gray-800 mb-2">ইমেইল</label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sotota-dark focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">পাসওয়ার্ড</label>
+                <label className="block text-sm font-bold text-gray-800 mb-2">পাসওয়ার্ড</label>
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="আপনার পাসওয়ার্ড"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sotota-dark focus:border-transparent"
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800"
                   >
                     {showPassword ? '🙈' : '👁'}
                   </button>
                 </div>
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-gray-600">
-                <p className="font-semibold text-blue-600 mb-1">Demo করার জন্য:</p>
-                <p>Email: <span className="font-mono">{email}</span></p>
-                <p>Password: <span className="font-mono">{demoPassword}</span></p>
+              <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 text-sm text-gray-700">
+                <p className="font-bold text-blue-700 mb-2">Demo করার জন্য:</p>
+                <p className="text-gray-800">Email: <span className="font-mono font-semibold text-gray-900">{email}</span></p>
+                <p className="text-gray-800">Password: <span className="font-mono font-semibold text-gray-900">{demoPassword}</span></p>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-sotota-dark text-white font-semibold py-2 rounded-lg hover:bg-sotota-light transition-colors disabled:opacity-50"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-colors disabled:opacity-50 shadow-lg"
               >
                 {loading ? 'লগইন হচ্ছে...' : 'লগইন করুন'}
               </button>
             </form>
 
-            <p className="text-center text-gray-600 text-sm mt-6">
+            <p className="text-center text-gray-700 text-sm mt-6 font-medium">
               এখনো অ্যাকাউন্ট নেই?{' '}
-              <Link href="/signup" className="text-sotota-dark font-semibold hover:underline">
+              <Link href="/signup" className="text-blue-600 font-bold hover:underline">
                 সাইন আপ করুন
               </Link>
             </p>
