@@ -2,24 +2,8 @@
 
 import NextAuth, { type NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-
-// Mock users for development (in case database is unavailable)
-const MOCK_USERS = [
-  {
-    id: 'user-1',
-    email: 'rahim@shotota.com',
-    name: 'আবদুর রহিম',
-    password: 'hashed_password_123',
-    role: 'ADMIN', // Admin user for testing admin features
-  },
-  {
-    id: 'user-2',
-    email: 'test@test.com',
-    name: 'Test User',
-    password: 'password',
-    role: 'STUDENT',
-  },
-]
+import bcrypt from 'bcryptjs'
+import { prisma } from '@/lib/db/client'
 
 // Generate a default secret for development if not provided
 const getSecret = () => {
@@ -44,19 +28,29 @@ export const authOptions: NextAuthOptions = {
             return null
           }
 
-          // Use mock users for development (database unavailable)
-          const mockUser = MOCK_USERS.find((u) => u.email === credentials.email)
-          
-          if (mockUser && credentials.password === mockUser.password) {
-            return {
-              id: mockUser.id,
-              email: mockUser.email,
-              name: mockUser.name,
-              role: mockUser.role as 'STUDENT' | 'ADMIN',
-            }
+          // Query database for user
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email },
+          })
+
+          if (!user) {
+            return null
           }
-          
-          return null
+
+          // Compare password with bcrypt
+          const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
+
+          if (!isPasswordValid) {
+            return null
+          }
+
+          // Return user object for session
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role as 'STUDENT' | 'ADMIN',
+          }
         } catch (error) {
           console.error('Auth error:', error)
           return null
