@@ -4,6 +4,7 @@ import NextAuth, { type NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/db/client'
+import { userStore } from '@/lib/auth/userStore'
 
 // Generate a default secret for development if not provided
 const getSecret = () => {
@@ -28,10 +29,18 @@ export const authOptions: NextAuthOptions = {
             return null
           }
 
-          // Query database for user
-          const user = await prisma.user.findUnique({
-            where: { email: credentials.email },
-          })
+          let user = null
+
+          try {
+            // Try database first
+            user = await prisma.user.findUnique({
+              where: { email: credentials.email },
+            })
+          } catch (dbError) {
+            console.log('Database unavailable, checking memory store...')
+            // Fall back to in-memory store
+            user = userStore.findByEmail(credentials.email)
+          }
 
           if (!user) {
             return null
@@ -49,7 +58,7 @@ export const authOptions: NextAuthOptions = {
             id: user.id,
             email: user.email,
             name: user.name,
-            role: user.role as 'STUDENT' | 'ADMIN',
+            role: (user.role || 'STUDENT') as 'STUDENT' | 'ADMIN',
           }
         } catch (error) {
           console.error('Auth error:', error)
