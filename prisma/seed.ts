@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
@@ -14,12 +15,28 @@ async function main() {
   await prisma.course.deleteMany()
   await prisma.user.deleteMany()
 
-  // Create users
-  const user1 = await prisma.user.create({
+  // Hash passwords
+  const adminPassword = await bcrypt.hash('hashed_password_123', 10)
+  const studentPassword = await bcrypt.hash('password', 10)
+
+  // Create ADMIN user
+  const admin = await prisma.user.create({
     data: {
       email: 'rahim@shotota.com',
-      password: 'hashed_password_123',
-      name: 'আবদুর রহিম',
+      password: adminPassword,
+      name: 'আবদুর রহিম (Admin)',
+      phone: '01700000000',
+      batch: 'ADMIN',
+      role: 'ADMIN'
+    }
+  })
+
+  // Create student users
+  const user1 = await prisma.user.create({
+    data: {
+      email: 'test@test.com',
+      password: studentPassword,
+      name: 'Test Student',
       phone: '01700000001',
       batch: 'MBBS-2025',
       role: 'STUDENT'
@@ -29,7 +46,7 @@ async function main() {
   const user2 = await prisma.user.create({
     data: {
       email: 'karim@shotota.com',
-      password: 'hashed_password_123',
+      password: studentPassword,
       name: 'মোহাম্মদ করিম',
       phone: '01700000002',
       batch: 'MBBS-2025',
@@ -40,7 +57,7 @@ async function main() {
   const user3 = await prisma.user.create({
     data: {
       email: 'nazma@shotota.com',
-      password: 'hashed_password_123',
+      password: studentPassword,
       name: 'নাজমা আক্তার',
       phone: '01700000003',
       batch: 'MBBS-2026',
@@ -51,7 +68,7 @@ async function main() {
   const user4 = await prisma.user.create({
     data: {
       email: 'sara@shotota.com',
-      password: 'hashed_password_123',
+      password: studentPassword,
       name: 'সারা খান',
       phone: '01700000004',
       batch: 'MBBS-2026',
