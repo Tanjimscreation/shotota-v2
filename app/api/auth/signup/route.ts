@@ -7,7 +7,7 @@ import { validators } from '@/lib/utils/validators'
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password, name } = await request.json()
+    const { email, password, name, phone, batch } = await request.json()
 
     // Validation
     if (!email || !password || !name) {
@@ -24,9 +24,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!validators.isStrongPassword(password)) {
+    // Relaxed password validation - minimum 6 characters
+    if (password.length < 6) {
       return NextResponse.json(
-        { error: 'Password must be at least 8 characters with uppercase, lowercase, and number' },
+        { error: 'Password must be at least 6 characters' },
         { status: 400 }
       )
     }
@@ -53,6 +54,8 @@ export async function POST(request: NextRequest) {
         password: hashedPassword,
         name,
         role: 'STUDENT', // Default role is student
+        phone: phone || null,
+        batch: batch || null,
       },
     })
 

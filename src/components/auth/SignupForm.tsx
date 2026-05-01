@@ -73,7 +73,7 @@ export default function SignupForm() {
       return
     }
     if (password.length < 6) {
-      setError('পাসওয়ার্ড কমপক্ষে ६ অক্ষর দীর्घ হতে হবে')
+      setError('পাসওয়ার্ড কমপক্ষে ৬ অক্ষর দীর্ঘ হতে হবে')
       setLoading(false)
       setIsSubmitting(false)
       return
