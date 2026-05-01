@@ -70,8 +70,8 @@ export default function AdminDashboard() {
       <div className="max-w-6xl mx-auto p-6">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-sotota-dark mb-2">অ্যাডমিন প্যানেল</h1>
-          <p className="text-gray-600">স্বাগতম, {session?.user?.name || 'অ্যাডমিন'}!</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">অ্যাডমিন প্যানেল</h1>
+          <p className="text-gray-700 font-semibold text-lg">স্বাগতম, {session?.user?.name || 'অ্যাডমিন'}!</p>
         </div>
 
         {/* Admin Modules */}
@@ -86,13 +86,13 @@ export default function AdminDashboard() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Link href={module.href}>
-                  <div className={`${module.color} rounded-xl p-6 cursor-pointer transition-all duration-200 border border-gray-200 h-full`}>
+                  <div className={`${module.color} rounded-xl p-6 cursor-pointer transition-all duration-200 border-2 border-gray-300 h-full shadow-md hover:shadow-lg`}>
                     <div className={`${module.textColor} text-4xl mb-4`}>
                       <Icon />
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-800 mb-2">{module.title}</h3>
-                    <p className="text-gray-600 text-sm mb-4">{module.description}</p>
-                    <div className="flex items-center gap-2 text-sotota-dark font-semibold">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{module.title}</h3>
+                    <p className="text-gray-700 text-sm mb-4 font-medium">{module.description}</p>
+                    <div className="flex items-center gap-2 text-gray-900 font-bold">
                       যান <FiArrowRight className="text-lg" />
                     </div>
                   </div>
@@ -103,24 +103,24 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Stats */}
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">সংক্ষিপ্ত পরিসংখ্যান</h2>
+        <div className="bg-white rounded-xl shadow-xl p-8 mb-8 border border-gray-200">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">সংক্ষিপ্ত পরিসংখ্যান</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-sotota-dark mb-2">0</div>
-              <p className="text-gray-600">সক্রিয় পরীক্ষা</p>
+            <div className="text-center bg-blue-50 rounded-lg p-4">
+              <div className="text-4xl font-bold text-blue-700 mb-2">0</div>
+              <p className="text-gray-800 font-semibold">সক্রিয় পরীক্ষা</p>
             </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-sotota-dark mb-2">0</div>
-              <p className="text-gray-600">মোট শিক্ষার্থী</p>
+            <div className="text-center bg-green-50 rounded-lg p-4">
+              <div className="text-4xl font-bold text-green-700 mb-2">0</div>
+              <p className="text-gray-800 font-semibold">মোট শিক্ষার্থী</p>
             </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-sotota-dark mb-2">0</div>
-              <p className="text-gray-600">সম্পন্ন পরীক্ষা</p>
+            <div className="text-center bg-purple-50 rounded-lg p-4">
+              <div className="text-4xl font-bold text-purple-700 mb-2">0</div>
+              <p className="text-gray-800 font-semibold">সম্পন্ন পরীক্ষা</p>
             </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-sotota-dark mb-2">0</div>
-              <p className="text-gray-600">গড় স্কোর</p>
+            <div className="text-center bg-orange-50 rounded-lg p-4">
+              <div className="text-4xl font-bold text-orange-700 mb-2">0</div>
+              <p className="text-gray-800 font-semibold">গড় স্কোর</p>
             </div>
           </div>
         </div>
@@ -129,7 +129,7 @@ export default function AdminDashboard() {
         <div className="flex justify-end">
           <button
             onClick={() => signOut({ redirect: true, callbackUrl: '/login' })}
-            className="flex items-center gap-2 px-6 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-semibold"
+            className="flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-bold shadow-md"
           >
             <FiLogOut /> লগ আউট করুন
           </button>
