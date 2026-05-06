@@ -30,6 +30,8 @@ model User {
   accounts      Account[]
   sessions      Session[]
   leaderboardEntry LeaderboardEntry?
+  wrongAnswers  WrongAnswer[] @relation("UserWrongAnswers")
+  negativeMarkTracker NegativeMarkTracker? @relation("UserNegativeMarks")
   
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -236,6 +238,66 @@ model Upload {
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   createdAt     DateTime  @default(now())
+
+  @@index([userId])
+}
+
+// ============= WRONG ANSWER MODELS =============
+
+model WrongAnswer {
+  id              String    @id @default(cuid())
+  userId          String
+  examResultId    String
+  questionId      String
+  
+  // Question Details
+  questionText    String
+  userAnswer      String    // User's answer (A, B, C, D)
+  correctAnswer   String    // Correct answer (A, B, C, D)
+  explanation     String?   // Why this is wrong
+  
+  // Metadata
+  subject         String?
+  category        String?
+  
+  user            User      @relation("UserWrongAnswers", fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([examResultId])
+  @@index([createdAt])
+}
+
+// ============= NEGATIVE MARKS TRACKING =============
+
+model NegativeMarkTracker {
+  id                      String    @id @default(cuid())
+  userId                  String    @unique
+  
+  // Daily Stats
+  dailyNegativeMarks      Float     @default(0)
+  dailyNegativePercentage Float     @default(0)
+  
+  // Weekly Stats
+  weeklyNegativeMarks     Float     @default(0)
+  weeklyNegativePercentage Float    @default(0)
+  weekStartDate           DateTime?
+  
+  // Monthly Stats
+  monthlyNegativeMarks    Float     @default(0)
+  monthlyNegativePercentage Float   @default(0)
+  monthStartDate          DateTime?
+  
+  // All-time Stats
+  totalNegativeMarks      Float     @default(0)
+  totalExamsAttempted     Int       @default(0)
+  
+  user                    User      @relation("UserNegativeMarks", fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
 
   @@index([userId])
 }

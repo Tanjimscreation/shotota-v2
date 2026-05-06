@@ -73,83 +73,6 @@ export default function CoursesPage() {
       </DashboardLayout>
     )
   }
-    id: '1',
-    title: 'সাধারণ জীববিজ্ঞান - ১',
-    description: 'কোশ, টিস্যু এবং অঙ্গ সম্পর্কে বিস্তারিত অধ্যয়ন',
-    thumbnail: '🧬',
-    instructor: 'ডা. রহিম',
-    progress: 65,
-    enrolled: true,
-    locked: false,
-    category: 'জীববিজ্ঞান',
-    lessons: 24
-  },
-  {
-    id: '2',
-    title: 'অর্গানিক রসায়ন মৌলিক',
-    description: 'কার্বনিক যৌগ এবং তাদের বৈশিষ্ট্য',
-    thumbnail: '⚗️',
-    instructor: 'প্রফেসর নাজমুল',
-    progress: 0,
-    enrolled: false,
-    locked: false,
-    category: 'রসায়ন',
-    lessons: 32
-  },
-  {
-    id: '3',
-    title: 'পদার্থবিজ্ঞানের ভিত্তি',
-    description: 'গতিবিদ্যা, তরঙ্গ এবং শক্তি নীতি',
-    thumbnail: '⚡',
-    instructor: 'মিস সিদ্ধান্তা',
-    progress: 0,
-    enrolled: false,
-    locked: false,
-    category: 'পদার্থবিজ্ঞান',
-    lessons: 28
-  },
-  {
-    id: '4',
-    title: 'মানব শারীরবিজ্ঞান উন্নত',
-    description: 'শরীরের সকল সিস্টেমের গভীর বিশ্লেষণ',
-    thumbnail: '❤️',
-    instructor: 'ডা. করিম',
-    progress: 45,
-    enrolled: true,
-    locked: false,
-    category: 'জীববিজ্ঞান',
-    lessons: 40
-  },
-  {
-    id: '5',
-    title: 'পরীক্ষা শিল্প - মেডিকেল',
-    description: 'ল্যাব পরীক্ষা এবং নির্ণয়ের পদ্ধতি',
-    thumbnail: '🔬',
-    instructor: 'প্রফেসর ইমাম',
-    progress: 0,
-    enrolled: false,
-    locked: true,
-    category: 'বিশেষ',
-    lessons: 20
-  },
-  {
-    id: '6',
-    title: 'ব্যবহারিক প্রশিক্ষণ প্যাকেজ',
-    description: 'রোগ নির্ণয় এবং চিকিৎসা পরিকল্পনা',
-    thumbnail: '📋',
-    instructor: 'ডা. আনোয়ার',
-    progress: 0,
-    enrolled: false,
-    locked: true,
-    category: 'ক্লিনিক্যাল',
-    lessons: 36
-  }
-]
-
-export default function CoursesPage() {
-  const [courses, setCourses] = useState<Course[]>(mockCourses)
-  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleEnrollClick = (course: Course) => {
     setSelectedCourse(course)
@@ -168,7 +91,6 @@ export default function CoursesPage() {
   }
 
   const handleStartCourse = (course: Course) => {
-    // Navigate to course content (Phase 5)
     console.log('Starting course:', course.id)
   }
 
@@ -217,30 +139,29 @@ export default function CoursesPage() {
         </div>
 
         {/* Courses Grid */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {courses.map((course, index) => (
-            <motion.div
-              key={course.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 * index }}
-            >
-              <CourseCard
-                {...course}
-                onEnroll={() => handleEnrollClick(course)}
-                onStart={() => handleStartCourse(course)}
-              />
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Empty State */}
-        {courses.length === 0 && (
+        {courses.length > 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {courses.map((course, index) => (
+              <motion.div
+                key={course.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * index }}
+              >
+                <CourseCard
+                  {...course}
+                  onEnroll={() => handleEnrollClick(course)}
+                  onStart={() => handleStartCourse(course)}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        ) : (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { FiBook, FiCheckCircle, FiTrendingUp, FiAward, FiZap, FiSettings } from 'react-icons/fi'
 import { DashboardLayout } from '@/components/DashboardLayout'
+import WrongAnswerCollection from '@/components/student/WrongAnswerCollection'
+import NegativeMarksAnalytics from '@/components/student/NegativeMarksAnalytics'
 
 export default function DashboardPage() {
   const { data: session, status } = useSession()
@@ -301,6 +303,28 @@ export default function DashboardPage() {
             </div>
           </motion.div>
         </div>
+
+        {/* Negative Marks Analytics Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="mt-12 pt-8 border-t border-sotota-border"
+        >
+          <NegativeMarksAnalytics />
+        </motion.div>
+
+        {/* Wrong Answer Collection Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="mt-12 pt-8 border-t border-sotota-border"
+        >
+          {session?.user?.id && (
+            <WrongAnswerCollection userId={session.user.id as string} />
+          )}
+        </motion.div>
       </div>
     </DashboardLayout>
   )
