@@ -35,37 +35,47 @@ export default function LoginForm({
     setError('')
 
     try {
-      if (!email.trim() || !password.trim()) {
+      const trimmedEmail = email.trim().toLowerCase()
+      const trimmedPassword = password.trim()
+
+      if (!trimmedEmail || !trimmedPassword) {
         setError('ইমেইল এবং পাসওয়ার্ড উভয় প্রয়োজন')
         setLoading(false)
         setIsSubmitting(false)
         return
       }
 
+      console.log('🔐 Attempting login for:', trimmedEmail)
+
       const result = await signIn('credentials', {
-        email,
-        password,
-        role,
+        email: trimmedEmail,
+        password: trimmedPassword,
         redirect: false
       })
 
+      console.log('📍 Login result:', result)
+
       if (result?.error) {
-        setError('ইমেইল বা পাসওয়ার্ড ভুল')
+        console.log('❌ Login error:', result.error)
+        setError('ইমেইল বা পাসওয়ার্ড ভুল। পুনরায় চেষ্টা করুন।')
         setLoading(false)
         setIsSubmitting(false)
       } else if (result?.ok) {
+        console.log('✅ Login successful')
         submitTimeoutRef.current = setTimeout(() => {
           router.push(role === 'admin' ? '/admin' : '/dashboard')
           setLoading(false)
           setIsSubmitting(false)
         }, 500)
       } else {
+        console.log('⚠️ Unexpected login response')
         setError('কিছু সমস্যা হয়েছে। পুনরায় চেষ্টা করুন।')
         setLoading(false)
         setIsSubmitting(false)
       }
-    } catch (err) {
-      setError('কিছু সমস্যা হয়েছে। পুনরায় চেষ্টা করুন।')
+    } catch (err: any) {
+      console.error('❌ Auth error:', err)
+      setError('কানেকশন ত্রুটি। ইন্টারনেট সংযোগ যাচাই করুন এবং পুনরায় চেষ্টা করুন।')
       setLoading(false)
       setIsSubmitting(false)
     }

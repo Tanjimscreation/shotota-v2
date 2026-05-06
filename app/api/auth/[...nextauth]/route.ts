@@ -15,6 +15,18 @@ const getSecret = () => {
   return 'development-secret-key-change-in-production-' + Math.random().toString(36).substring(2)
 }
 
+// Test database connection on startup
+const testDatabaseConnection = async () => {
+  try {
+    await prisma.$queryRaw`SELECT 1`
+    console.log('✅ Database connection verified')
+    return true
+  } catch (error) {
+    console.error('❌ Database connection failed:', error)
+    return false
+  }
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -26,6 +38,7 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         try {
           if (!credentials?.email || !credentials?.password) {
+            console.log('❌ Missing email or password')
             return null
           }
 
@@ -34,15 +47,31 @@ export const authOptions: NextAuthOptions = {
           try {
             // Try database first
             user = await prisma.user.findUnique({
-              where: { email: credentials.email },
+              where: { email: credentials.email.toLowerCase() },
+              select: {
+                id: true,
+                email: true,
+                password: true,
+                name: true,
+                role: true,
+              }
             })
-          } catch (dbError) {
-            console.log('Database unavailable, checking memory store...')
+            
+            if (user) {
+              console.log('✅ User found in database:', user.email)
+            }
+          } catch (dbError: any) {
+            console.log('⚠️ Database error, checking fallback store:', dbError.message)
             // Fall back to in-memory store
-            user = userStore.findByEmail(credentials.email)
+            const memoryUser = userStore.findByEmail(credentials.email)
+            if (memoryUser) {
+              user = memoryUser
+              console.log('✅ User found in memory store:', user.email)
+            }
           }
 
           if (!user) {
+            console.log('❌ User not found:', credentials.email)
             return null
           }
 
@@ -50,8 +79,11 @@ export const authOptions: NextAuthOptions = {
           const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
 
           if (!isPasswordValid) {
+            console.log('❌ Invalid password for:', credentials.email)
             return null
           }
+
+          console.log('✅ Authentication successful for:', credentials.email)
 
           // Return user object for session
           return {
@@ -60,8 +92,8 @@ export const authOptions: NextAuthOptions = {
             name: user.name,
             role: (user.role || 'STUDENT') as 'STUDENT' | 'ADMIN',
           }
-        } catch (error) {
-          console.error('Auth error:', error)
+        } catch (error: any) {
+          console.error('❌ Auth error:', error.message || error)
           return null
         }
       },

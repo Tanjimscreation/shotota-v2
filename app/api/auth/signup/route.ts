@@ -18,7 +18,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!validators.isValidEmail(email)) {
+    const normalizedEmail = email.toLowerCase().trim()
+
+    if (!validators.isValidEmail(normalizedEmail)) {
       return NextResponse.json(
         { error: 'Invalid email format' },
         { status: 400 }
@@ -33,13 +35,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    let useDatabase = true
-
     try {
       // Try to use database
       // Check if user already exists
       const existingUser = await prisma.user.findUnique({
-        where: { email },
+        where: { email: normalizedEmail },
       })
 
       if (existingUser) {
@@ -55,36 +55,41 @@ export async function POST(request: NextRequest) {
       // Create user
       const user = await prisma.user.create({
         data: {
-          email,
+          email: normalizedEmail,
           password: hashedPassword,
-          name,
+          name: name.trim(),
           role: 'STUDENT', // Default role is student
-          phone: phone || null,
-          batch: batch || null,
+          phone: phone?.trim() || null,
+          batch: batch?.trim() || null,
         },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          role: true,
+          phone: true,
+          batch: true,
+          createdAt: true,
+        }
       })
 
-      // Return user without password
-      const { password: _, ...userWithoutPassword } = user
+      console.log('✅ User created successfully:', user.email)
 
       return NextResponse.json(
         {
           message: 'User created successfully',
-          user: userWithoutPassword,
+          user,
         },
         { status: 201 }
       )
-    } catch (dbError) {
-      console.error('Database error:', dbError)
-      useDatabase = false
-    }
-
-    // Fallback: Use in-memory store if database fails
-    if (!useDatabase) {
-      console.log('📌 Using in-memory store (database unavailable)')
+    } catch (dbError: any) {
+      console.error('❌ Database error during signup:', dbError.message || dbError)
+      
+      // Fallback: Use in-memory store if database fails
+      console.log('⚠️ Using in-memory store (database unavailable)')
       
       // Check if user exists in memory
-      const existingUser = userStore.findByEmail(email)
+      const existingUser = userStore.findByEmail(normalizedEmail)
       if (existingUser) {
         return NextResponse.json(
           { error: 'User with this email already exists' },
@@ -98,12 +103,12 @@ export async function POST(request: NextRequest) {
       // Create user in memory
       const user = {
         id: Math.random().toString(36).substr(2, 9),
-        email,
+        email: normalizedEmail,
         password: hashedPassword,
-        name,
+        name: name.trim(),
         role: 'STUDENT' as const,
-        phone: phone || null,
-        batch: batch || null,
+        phone: phone?.trim() || null,
+        batch: batch?.trim() || null,
         createdAt: new Date(),
         updatedAt: new Date()
       }
@@ -113,6 +118,8 @@ export async function POST(request: NextRequest) {
       // Return user without password
       const { password: _, ...userWithoutPassword } = user
 
+      console.log('✅ User created in memory store:', user.email)
+
       return NextResponse.json(
         {
           message: 'User created successfully (demo mode)',
@@ -121,10 +128,10 @@ export async function POST(request: NextRequest) {
         { status: 201 }
       )
     }
-  } catch (error) {
-    console.error('Signup error:', error)
+  } catch (error: any) {
+    console.error('❌ Signup error:', error.message || error)
     return NextResponse.json(
-      { error: 'Failed to create user' },
+      { error: 'Failed to create user. Please try again.' },
       { status: 500 }
     )
   }
