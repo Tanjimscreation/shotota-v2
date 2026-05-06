@@ -12,6 +12,9 @@ export default function DashboardPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<'progress' | 'exams' | 'certs'>('progress')
+  const [dashboardData, setDashboardData] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -19,7 +22,29 @@ export default function DashboardPage() {
     }
   }, [status, router])
 
-  if (status === 'loading') {
+  useEffect(() => {
+    if (status === 'authenticated') {
+      fetchDashboardData()
+    }
+  }, [status])
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/dashboard')
+      if (!response.ok) throw new Error('Failed to fetch dashboard data')
+      const data = await response.json()
+      setDashboardData(data)
+      setError(null)
+    } catch (err) {
+      console.error('Dashboard fetch error:', err)
+      setError('Failed to load dashboard data')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (status === 'loading' || loading) {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-screen">
@@ -31,6 +56,26 @@ export default function DashboardPage() {
         </div>
       </DashboardLayout>
     )
+  }
+
+  if (error) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-screen">
+          <p className="text-red-500 text-lg">{error}</p>
+        </div>
+      </DashboardLayout>
+    )
+  }
+
+  const stats = dashboardData || {
+    totalCourses: 0,
+    completedCourses: 0,
+    inProgressCourses: 0,
+    totalHours: 0,
+    completionRate: 0,
+    upcomingExams: [],
+    enrolledCourses: []
   }
 
   // Stats Cards with Counter Animation
@@ -98,10 +143,10 @@ export default function DashboardPage() {
           animate={{ opacity: 1 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
         >
-          <StatsCard value="২,৪৫০" label="মোট স্কোর" icon={FiTrendingUp} />
-          <StatsCard value="৮" label="ভর্তি কোর্স" icon={FiBook} />
-          <StatsCard value="१२" label="ধারাবাহিকতা" icon={FiZap} />
-          <StatsCard value="#১২" label="র‍্যাংক" icon={FiAward} />
+          <StatsCard value={String(stats.completionRate)} label="সম্পূর্ণতার হার" icon={FiTrendingUp} />
+          <StatsCard value={String(stats.totalCourses)} label="মোট কোর্স" icon={FiBook} />
+          <StatsCard value={String(stats.completedCourses)} label="সম্পন্ন কোর্স" icon={FiCheckCircle} />
+          <StatsCard value={String(stats.totalHours || 0)} label="মোট ঘন্টা" icon={FiAward} />
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
