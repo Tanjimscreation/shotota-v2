@@ -1,7 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { DashboardLayout } from '@/components/DashboardLayout'
 import CourseCard from '@/components/courses/CourseCard'
 import EnrollmentModal from '@/components/courses/EnrollmentModal'
@@ -19,8 +21,58 @@ interface Course {
   lessons: number
 }
 
-const mockCourses: Course[] = [
-  {
+export default function CoursesPage() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
+  const [courses, setCourses] = useState<Course[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login')
+    }
+  }, [status, router])
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      fetchCourses()
+    }
+  }, [status])
+
+  const fetchCourses = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/courses')
+      if (!response.ok) throw new Error('Failed to fetch courses')
+      const data = await response.json()
+      setCourses(data.courses || data)
+      setError(null)
+    } catch (err) {
+      console.error('Courses fetch error:', err)
+      setError('Failed to load courses')
+      // Fallback to empty array
+      setCourses([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (status === 'loading' || loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-screen">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="w-12 h-12 border-4 border-sotota-accent border-t-transparent rounded-full"
+          />
+        </div>
+      </DashboardLayout>
+    )
+  }
     id: '1',
     title: 'সাধারণ জীববিজ্ঞান - ১',
     description: 'কোশ, টিস্যু এবং অঙ্গ সম্পর্কে বিস্তারিত অধ্যয়ন',
