@@ -9,6 +9,19 @@ Shotota is a comprehensive exam preparation platform with:
 - 📚 **Instructor Panel**: Create courses and upload bulk questions
 - 👨‍💼 **Admin Dashboard**: Manage platform, verify payments, view analytics
 
+## 🚀 Live Application
+
+**Deployed on Render:** https://shotota-v2.onrender.com
+
+**Features:**
+- ✅ Role-based signup (Student/Instructor)
+- ✅ Secure authentication with NextAuth.js
+- ✅ Student dashboard with exam access
+- ✅ Admin dashboard with course/exam upload APIs
+- ✅ PostgreSQL database (Neon free tier)
+
+See [RENDER_DEPLOYMENT.md](RENDER_DEPLOYMENT.md) for deployment details.
+
 ## 🌟 Key Features
 
 ### For Students

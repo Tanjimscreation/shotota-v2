@@ -81,12 +81,11 @@ export default function LoginForm({
     }
   }
 
-  const demoPassword = role === 'admin' ? 'hashed_password_123' : 'password'
   const roleTitle = role === 'admin' ? 'অ্যাডমিন লগইন' : 'শিক্ষার্থী লগইন'
   const roleSubtitle = role === 'admin' ? 'আপনার অ্যাডমিন অ্যাকাউন্টে সাইন ইন করুন' : 'আপনার শিক্ষার্থী অ্যাকাউন্টে সাইন ইন করুন'
-
-  // Simple modal-based login for role selection
-  if (onBack) {
+  
+  // Show role-specific form if role parameter is provided
+  if (role) {
     return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -145,12 +144,6 @@ export default function LoginForm({
                     {showPassword ? '🙈' : '👁'}
                   </button>
                 </div>
-              </div>
-
-              <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 text-sm text-gray-700">
-                <p className="font-bold text-blue-700 mb-2">Demo করার জন্য:</p>
-                <p className="text-gray-800">Email: <span className="font-mono font-semibold text-gray-900">{email}</span></p>
-                <p className="text-gray-800">Password: <span className="font-mono font-semibold text-gray-900">{demoPassword}</span></p>
               </div>
 
               <button

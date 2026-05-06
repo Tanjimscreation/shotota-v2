@@ -8,7 +8,7 @@ import { userStore } from '@/lib/auth/userStore'
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password, name, phone, batch } = await request.json()
+    const { email, password, name, phone, batch, role } = await request.json()
 
     // Validation
     if (!email || !password || !name) {
@@ -35,6 +35,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Validate role
+    const userRole = role && (role === 'ADMIN' || role === 'STUDENT') ? role : 'STUDENT'
+
     try {
       // Try to use database
       // Check if user already exists
@@ -58,7 +61,7 @@ export async function POST(request: NextRequest) {
           email: normalizedEmail,
           password: hashedPassword,
           name: name.trim(),
-          role: 'STUDENT', // Default role is student
+          role: userRole as 'STUDENT' | 'ADMIN', // Use the validated role
           phone: phone?.trim() || null,
           batch: batch?.trim() || null,
         },
@@ -73,7 +76,7 @@ export async function POST(request: NextRequest) {
         }
       })
 
-      console.log('✅ User created successfully:', user.email)
+      console.log('✅ User created successfully:', user.email, 'Role:', user.role)
 
       return NextResponse.json(
         {
@@ -106,7 +109,7 @@ export async function POST(request: NextRequest) {
         email: normalizedEmail,
         password: hashedPassword,
         name: name.trim(),
-        role: 'STUDENT' as const,
+        role: userRole as 'STUDENT' | 'ADMIN',
         phone: phone?.trim() || null,
         batch: batch?.trim() || null,
         createdAt: new Date(),
@@ -118,7 +121,7 @@ export async function POST(request: NextRequest) {
       // Return user without password
       const { password: _, ...userWithoutPassword } = user
 
-      console.log('✅ User created in memory store:', user.email)
+      console.log('✅ User created in memory store:', user.email, 'Role:', user.role)
 
       return NextResponse.json(
         {

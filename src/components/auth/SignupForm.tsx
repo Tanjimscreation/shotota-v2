@@ -27,6 +27,7 @@ export default function SignupForm() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [role, setRole] = useState<'STUDENT' | 'ADMIN'>('STUDENT')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -83,7 +84,7 @@ export default function SignupForm() {
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: fullName, phone, email, batch, password })
+        body: JSON.stringify({ name: fullName, phone, email, batch, password, role })
       })
 
       const result = await response.json()
@@ -202,7 +203,39 @@ export default function SignupForm() {
               </select>
             </div>
 
-            {/* Password */}
+            {/* Role Selection */}
+            <div>
+              <label className="block text-sm font-medium text-sotota-text mb-3">আপনার ভূমিকা নির্বাচন করুন</label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setRole('STUDENT')}
+                  className={`py-3 px-4 rounded-lg font-medium transition ${
+                    role === 'STUDENT'
+                      ? 'bg-sotota-accent text-white border-2 border-sotota-accent'
+                      : 'bg-sotota-card2 text-sotota-text border-2 border-sotota-border hover:border-sotota-accent'
+                  }`}
+                >
+                  👨‍🎓 শিক্ষার্থী
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRole('ADMIN')}
+                  className={`py-3 px-4 rounded-lg font-medium transition ${
+                    role === 'ADMIN'
+                      ? 'bg-sotota-accent text-white border-2 border-sotota-accent'
+                      : 'bg-sotota-card2 text-sotota-text border-2 border-sotota-border hover:border-sotota-accent'
+                  }`}
+                >
+                  👨‍🏫 প্রশিক্ষক
+                </button>
+              </div>
+              {role === 'ADMIN' && (
+                <p className="text-xs text-sotota-muted mt-2 p-2 bg-sotota-card2 rounded">
+                  ℹ️ প্রশিক্ষক হিসেবে আপনি কোর্স, পরীক্ষা এবং প্রশ্ন আপলোড করতে পারবেন।
+                </p>
+              )}
+            </div>
             <div>
               <label className="block text-sm font-medium text-sotota-text mb-2">পাসওয়ার্ড</label>
               <div className="relative">
