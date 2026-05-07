@@ -13,10 +13,10 @@ export const ShototaBrandLogo: React.FC = () => {
       {/* Logo Container - Transparent background for seamless navbar integration */}
       <div className="relative flex items-center gap-1 px-2 py-1">
         {/* Bengali Text Logo - Medical/Admission theme colors */}
-        <div className="text-2xl md:text-3xl font-black tracking-tight leading-none flex items-center">
-          <span className="text-red-500 drop-shadow-sm">স</span>
-          <span className="text-emerald-400 drop-shadow-sm">ত</span>
-          <span className="text-red-500 drop-shadow-sm">ত</span>
+        <div className="text-2xl md:text-3xl font-black tracking-[-0.05em] leading-none flex items-center">
+          <span className="text-red-500 drop-shadow-sm -mr-0.5">স</span>
+          <span className="text-emerald-400 drop-shadow-sm -mr-0.5">ত</span>
+          <span className="text-red-500 drop-shadow-sm -mr-0.5">ত</span>
           <span className="text-emerald-400 drop-shadow-sm">া</span>
         </div>
         
