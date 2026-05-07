@@ -1,82 +1,76 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, Variants } from 'framer-motion'
 import Link from 'next/link'
+import { ShototaBrandLogo } from './ShototaBrandLogo'
 
 export default function GlobalLayout({ children }: { children: React.ReactNode }) {
-  // Watermark animation - oscillating fade and drift
-  const watermarkVariants = {
+  // Floating watermark animation - hardware accelerated
+  const watermarkVariants: Variants = {
     animate: {
-      opacity: [0.03, 0.08, 0.03],
-      y: [0, 8, 0],
+      x: [0, 30, 0, -30, 0],
+      y: [0, -15, 0, 15, 0],
+      opacity: [0.05, 0.08, 0.05, 0.08, 0.05],
       transition: {
-        duration: 8,
+        duration: 12,
         repeat: Infinity,
-        ease: 'easeInOut' as any,
+        ease: 'easeInOut' as const,
       },
     },
   }
 
-  // Logo animation - entrance and hover
-  const logoVariants = {
-    initial: { opacity: 0, x: -20 },
-    animate: { 
-      opacity: 1, 
-      x: 0,
+  // Logo entrance animation
+  const logoVariants: Variants = {
+    initial: { opacity: 0, y: -20 },
+    animate: {
+      opacity: 1,
+      y: 0,
       transition: {
-        duration: 0.6,
-        ease: 'easeOut' as any,
-      }
+        duration: 0.5,
+        ease: 'easeOut' as const,
+      },
     },
-    hover: {
-      scale: 1.1,
-      transition: { duration: 0.3 }
-    }
   }
 
   return (
-    <div className="relative min-h-screen">
-      {/* Logo - Top Left with Animation */}
+    <div className="relative min-h-screen overflow-x-hidden">
+      {/* Integrated Logo - Top Left */}
       <motion.div
         initial="initial"
         animate="animate"
-        whileHover="hover"
         variants={logoVariants}
         className="fixed top-4 left-4 z-50"
       >
         <Link href="/" className="block">
-          {/* Shotota Logo - Bengali Only with Color Palette */}
-          <div className="flex items-center gap-1 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow">
-            <div className="text-3xl font-bold tracking-tight">
-              <span className="text-red-600">স</span>
-              <span className="text-blue-600">ত</span>
-              <span className="text-red-600">ত</span>
-              <span className="text-green-600">া</span>
-            </div>
-          </div>
+          <ShototaBrandLogo />
         </Link>
       </motion.div>
 
-      {/* Animated Watermark - Full Page Background */}
-      <motion.div
-        variants={watermarkVariants}
-        animate="animate"
-        className="fixed inset-0 pointer-events-none flex items-center justify-center"
-      >
-        <motion.div 
-          className="text-4xl md:text-6xl font-bold text-center select-none"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-        >
-          <span className="text-black">কাট মার্ক </span>
-          <span className="text-red-600">তুলতে</span>
-          <span className="text-black"> আমরাই </span>
-          <span className="text-red-600">সেরা</span>
-        </motion.div>
-      </motion.div>
+      {/* Animated Watermark Background Layer */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        {/* Multiple floating text instances for depth */}
+        {[0, 1, 2].map((index) => (
+          <motion.div
+            key={index}
+            variants={watermarkVariants}
+            animate="animate"
+            className="absolute"
+            style={{
+              top: `${20 + index * 30}%`,
+              left: `${10 + index * 25}%`,
+              transform: `rotate(${index % 2 === 0 ? -5 : 5}deg)`,
+            }}
+          >
+            <div className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight whitespace-nowrap">
+              <span className="text-red-500">কাট মার্ক</span>
+              <span className="text-gray-900"> তুলতে আমরাই </span>
+              <span className="text-red-500">সেরা</span>
+            </div>
+          </motion.div>
+        ))}
+      </div>
 
-      {/* Main Content */}
+      {/* Main Content - above watermark */}
       <div className="relative z-10">
         {children}
       </div>

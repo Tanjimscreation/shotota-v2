@@ -92,12 +92,32 @@ export default function LoginForm({
         animate={{ opacity: 1, y: 0 }}
         className="min-h-screen bg-gradient-to-br from-sotota-dark via-sotota-light to-sotota-dark flex items-center justify-center p-4"
       >
-        <div className="w-full max-w-md">
-          <button
-            onClick={onBack}
-            className="mb-6 text-white hover:text-gray-200 font-semibold flex items-center gap-2"
+        <div className="w-full max-w-6xl grid md:grid-cols-2 gap-8 items-center">
+          {/* Left Panel - Bengali Quote */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="hidden md:flex flex-col justify-center items-center text-center p-8"
           >
-            <FiArrowLeft /> ফিরে যান
+            <div className="relative">
+              <div className="absolute -top-4 -left-4 text-6xl text-white/20">"</div>
+              <blockquote className="text-2xl md:text-3xl font-bold text-white leading-relaxed">
+                অল্প অল্প করে বারবার পড়া, এমন{' '}
+                <span className="text-emerald-400">Micro Revision</span> দেয়াই চান্স-পাওয়া সব ভালো স্টুডেন্টের অভ্যাস
+              </blockquote>
+              <div className="absolute -bottom-4 -right-4 text-6xl text-white/20">"</div>
+            </div>
+            <div className="mt-8 w-24 h-1 bg-gradient-to-r from-transparent via-emerald-400 to-transparent" />
+          </motion.div>
+
+          {/* Right Panel - Login Form */}
+          <div className="w-full max-w-md mx-auto">
+            <button
+              onClick={onBack}
+              className="mb-6 text-white hover:text-gray-200 font-semibold flex items-center gap-2"
+            >
+              <FiArrowLeft /> ফিরে যান
           </button>
 
           <div className="bg-white rounded-2xl shadow-2xl p-8 border-2 border-gray-100">
@@ -161,6 +181,7 @@ export default function LoginForm({
                 সাইন আপ করুন
               </Link>
             </p>
+          </div>
           </div>
         </div>
       </motion.div>

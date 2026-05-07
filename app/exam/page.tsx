@@ -1,15 +1,16 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { DashboardLayout } from '@/components/DashboardLayout'
+import { FocusModeHeader } from '@/components/FocusModeHeader'
 import ExamQuestion from '@/components/exam/ExamQuestion'
 import ExamTimer from '@/components/exam/ExamTimer'
 import NavigationDots from '@/components/exam/NavigationDots'
 import SubmitModal from '@/components/exam/SubmitModal'
-import { FiArrowLeft, FiAlertCircle } from 'react-icons/fi'
+import { FiArrowLeft, FiAlertCircle, FiLayout } from 'react-icons/fi'
 
 interface Question {
   id: string
@@ -52,6 +53,7 @@ function ExamContent() {
   const [isExamActive, setIsExamActive] = useState(true)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [showFocusMode, setShowFocusMode] = useState(false)
 
   // Load exam data
   useEffect(() => {
@@ -71,6 +73,8 @@ function ExamContent() {
         setQuestions(data.questions)
         setTimeLeft(data.exam.duration * 60)
         setAnswers(new Array(data.questions.length).fill(null))
+        // Trigger focus mode after loading
+        setTimeout(() => setShowFocusMode(true), 300)
       } catch (err) {
         setError('পরীক্ষা লোড করতে ব্যর্থ হয়েছে')
         console.error(err)
@@ -81,6 +85,14 @@ function ExamContent() {
 
     fetchExam()
   }, [examId])
+
+  // Handle exit to dashboard with smooth transition
+  const handleExitToDashboard = () => {
+    setShowFocusMode(false)
+    setTimeout(() => {
+      router.push('/dashboard')
+    }, 300)
+  }
 
   const handleSelectOption = (option: string) => {
     const newAnswers = [...answers]
@@ -172,14 +184,30 @@ function ExamContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-sotota-bg flex items-center justify-center">
-        <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }}>
-          <div className="text-center">
-            <div className="w-16 h-16 border-4 border-sotota-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-sotota-text text-lg">পরীক্ষা লোড হচ্ছে...</p>
-          </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key="loading"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="min-h-screen bg-sotota-bg flex items-center justify-center"
+        >
+          <motion.div
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            <div className="text-center">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                className="w-16 h-16 border-4 border-sotota-accent border-t-transparent rounded-full mx-auto mb-4"
+              />
+              <p className="text-sotota-text text-lg">পরীক্ষা লোড হচ্ছে...</p>
+              <p className="text-sotota-muted text-sm mt-2">ড্যাশবোর্ড থেকে ফোকাস মোডে যাওয়া হচ্ছে</p>
+            </div>
+          </motion.div>
         </motion.div>
-      </div>
+      </AnimatePresence>
     )
   }
 
@@ -219,29 +247,26 @@ function ExamContent() {
 
   return (
     <div className="min-h-screen bg-sotota-bg">
-      {/* Back Button */}
-      <div className="sticky top-0 z-50 bg-sotota-surface border-b border-sotota-border">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link
-            href="/courses"
-            className="flex items-center gap-2 text-sotota-accent hover:text-sotota-accentl transition"
-          >
-            <FiArrowLeft className="w-5 h-5" />
-            <span>ফিরুন</span>
-          </Link>
+      <AnimatePresence>
+        {showFocusMode && exam && (
+          <FocusModeHeader
+            examTitle={exam.title}
+            courseTitle={exam.course.title}
+            timeLeft={timeLeft}
+            totalQuestions={questions.length}
+            currentQuestion={currentQuestion}
+            onExit={handleExitToDashboard}
+          />
+        )}
+      </AnimatePresence>
 
-          {/* Exam Title */}
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex-1 text-center">
-            <h1 className="text-2xl font-bold text-sotota-text">{exam.title}</h1>
-            <p className="text-sm text-sotota-muted">{exam.course.title}</p>
-          </motion.div>
-
-          {/* Timer */}
-          <ExamTimer totalSeconds={exam.duration * 60} onTimeUp={handleTimeUp} isActive={isExamActive} />
-        </div>
-      </div>
-
-      {/* Main Content */}
+      {/* Main Content - with top padding for header */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: showFocusMode ? 0.4 : 0 }}
+        className="pt-20"
+      >
       <div className="max-w-6xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left - Question */}
@@ -399,6 +424,7 @@ function ExamContent() {
         onClose={() => setShowSubmitModal(false)}
         isSubmitting={isSubmitting}
       />
+      </motion.div>
     </div>
   )
 }
