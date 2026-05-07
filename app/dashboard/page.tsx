@@ -249,9 +249,7 @@ export default function DashboardPage() {
           >
             {/* Lost Inspiration Button */}
             <motion.a
-              href="https://www.youtube.com/watch?v=CyjUTHQyYig&list=PLSLMkUXXzznEDopqk387iktprNHRMKzTO&pp=sAgC"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/inspiration"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ scale: 1.05 }}
