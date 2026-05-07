@@ -6,23 +6,23 @@ import { motion } from 'framer-motion'
 export const ShototaBrandLogo: React.FC = () => {
   return (
     <motion.div
-      className="relative flex items-center gap-2"
-      whileHover={{ scale: 1.05 }}
+      className="relative flex items-center gap-2 group"
+      whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
     >
-      {/* Logo Container with gradient background that blends with any theme */}
-      <div className="relative flex items-center gap-1 px-3 py-2 rounded-xl backdrop-blur-md bg-gradient-to-r from-white/90 via-white/80 to-white/90 dark:from-slate-800/90 dark:via-slate-800/80 dark:to-slate-800/90 shadow-lg border border-white/20 dark:border-slate-700/50">
-        {/* Bengali Text Logo with medical/admission theme colors */}
-        <div className="text-2xl md:text-3xl font-black tracking-tight leading-none">
-          <span className="text-red-600">স</span>
-          <span className="text-emerald-600">ত</span>
-          <span className="text-red-600">ত</span>
-          <span className="text-emerald-600">া</span>
+      {/* Logo Container - Transparent background for seamless navbar integration */}
+      <div className="relative flex items-center gap-1 px-2 py-1">
+        {/* Bengali Text Logo - Medical/Admission theme colors */}
+        <div className="text-2xl md:text-3xl font-black tracking-tight leading-none flex items-center">
+          <span className="text-red-500 drop-shadow-sm">স</span>
+          <span className="text-emerald-400 drop-shadow-sm">ত</span>
+          <span className="text-red-500 drop-shadow-sm">ত</span>
+          <span className="text-emerald-400 drop-shadow-sm">া</span>
         </div>
         
-        {/* Subtle quill/feather accent */}
+        {/* Subtle quill/feather accent - inverted for dark bg */}
         <svg
-          className="w-5 h-5 -scale-x-100 text-red-500"
+          className="w-5 h-5 -scale-x-100 text-emerald-400/80"
           viewBox="0 0 24 24"
           fill="currentColor"
           xmlns="http://www.w3.org/2000/svg"
@@ -31,8 +31,8 @@ export const ShototaBrandLogo: React.FC = () => {
         </svg>
       </div>
       
-      {/* Glow effect on hover */}
-      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-500/20 to-emerald-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
+      {/* Subtle glow effect on hover */}
+      <div className="absolute inset-0 rounded-lg bg-emerald-500/10 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
     </motion.div>
   )
 }

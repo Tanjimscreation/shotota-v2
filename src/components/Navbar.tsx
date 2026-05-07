@@ -7,6 +7,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { signOut, useSession } from 'next-auth/react'
+import { ShototaBrandLogo } from './ShototaBrandLogo'
 
 export const Navbar: React.FC = () => {
   const router = useRouter()
@@ -22,15 +23,9 @@ export const Navbar: React.FC = () => {
     <nav className="sticky top-0 z-50 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 shadow-2xl border-b border-emerald-500 border-opacity-30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+          {/* Logo - Bengali Only */}
           <Link href="/" className="flex-shrink-0">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.2 }}
-              className="text-2xl font-black bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent"
-            >
-              Shatota
-            </motion.div>
+            <ShototaBrandLogo />
           </Link>
 
           {/* Desktop Menu */}

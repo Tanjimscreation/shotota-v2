@@ -1,8 +1,6 @@
 'use client'
 
 import { motion, Variants } from 'framer-motion'
-import Link from 'next/link'
-import { ShototaBrandLogo } from './ShototaBrandLogo'
 
 export default function GlobalLayout({ children }: { children: React.ReactNode }) {
   // Floating watermark animation - hardware accelerated
@@ -19,33 +17,8 @@ export default function GlobalLayout({ children }: { children: React.ReactNode }
     },
   }
 
-  // Logo entrance animation
-  const logoVariants: Variants = {
-    initial: { opacity: 0, y: -20 },
-    animate: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: 'easeOut' as const,
-      },
-    },
-  }
-
   return (
     <div className="relative min-h-screen overflow-x-hidden">
-      {/* Integrated Logo - Top Left */}
-      <motion.div
-        initial="initial"
-        animate="animate"
-        variants={logoVariants}
-        className="fixed top-4 left-4 z-50"
-      >
-        <Link href="/" className="block">
-          <ShototaBrandLogo />
-        </Link>
-      </motion.div>
-
       {/* Animated Watermark Background Layer */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         {/* Multiple floating text instances for depth */}
