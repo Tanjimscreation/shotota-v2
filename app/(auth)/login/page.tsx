@@ -17,7 +17,6 @@ export default function LoginPage() {
       icon: FiShield,
       color: 'bg-red-50 hover:bg-red-100 border-red-200',
       textColor: 'text-red-600',
-      demo: 'Demo: rahim@shotota.com'
     },
     {
       id: 'student',
@@ -26,7 +25,6 @@ export default function LoginPage() {
       icon: FiBook,
       color: 'bg-blue-50 hover:bg-blue-100 border-blue-200',
       textColor: 'text-blue-600',
-      demo: 'Demo: test@test.com'
     }
   ]
 
@@ -64,8 +62,7 @@ export default function LoginPage() {
                 </div>
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">{role.title}</h2>
                 <p className="text-gray-600 mb-4">{role.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-gray-500">{role.demo}</span>
+                <div className="flex items-center justify-end">
                   <FiArrowRight className={`${role.textColor} text-xl`} />
                 </div>
               </motion.button>
