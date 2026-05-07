@@ -1,7 +1,6 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import Image from 'next/image'
 import Link from 'next/link'
 
 export default function GlobalLayout({ children }: { children: React.ReactNode }) {
@@ -18,20 +17,47 @@ export default function GlobalLayout({ children }: { children: React.ReactNode }
     },
   }
 
+  // Logo animation - entrance and hover
+  const logoVariants = {
+    initial: { opacity: 0, x: -20 },
+    animate: { 
+      opacity: 1, 
+      x: 0,
+      transition: {
+        duration: 0.6,
+        ease: 'easeOut' as any,
+      }
+    },
+    hover: {
+      scale: 1.1,
+      transition: { duration: 0.3 }
+    }
+  }
+
   return (
     <div className="relative min-h-screen">
-      {/* Logo - Top Left */}
-      <Link href="/" className="fixed top-4 left-4 z-50 hover:opacity-80 transition-opacity">
-        <div className="relative w-12 h-12 md:w-16 md:h-16">
-          <Image
-            src="/logo.png"
-            alt="Shotota Logo"
-            fill
-            className="object-contain"
-            priority
-          />
-        </div>
-      </Link>
+      {/* Logo - Top Left with Animation */}
+      <motion.div
+        initial="initial"
+        animate="animate"
+        whileHover="hover"
+        variants={logoVariants}
+        className="fixed top-4 left-4 z-50"
+      >
+        <Link href="/" className="block">
+          {/* Shotota Logo Text */}
+          <div className="flex items-center gap-2 bg-white/95 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg border border-gray-200">
+            <div className="text-2xl font-bold">
+              <span className="text-red-600">সত</span>
+              <span className="text-black">ত</span>
+              <span className="text-red-600">া</span>
+            </div>
+            <div className="hidden sm:block text-xs font-semibold text-gray-700">
+              SHOTOTA
+            </div>
+          </div>
+        </Link>
+      </motion.div>
 
       {/* Animated Watermark - Full Page Background */}
       <motion.div
@@ -39,12 +65,17 @@ export default function GlobalLayout({ children }: { children: React.ReactNode }
         animate="animate"
         className="fixed inset-0 pointer-events-none flex items-center justify-center"
       >
-        <div className="text-4xl md:text-6xl font-bold text-center select-none">
+        <motion.div 
+          className="text-4xl md:text-6xl font-bold text-center select-none"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
+        >
           <span className="text-black">কাট মার্ক </span>
           <span className="text-red-600">তুলতে</span>
           <span className="text-black"> আমরাই </span>
           <span className="text-red-600">সেরা</span>
-        </div>
+        </motion.div>
       </motion.div>
 
       {/* Main Content */}
