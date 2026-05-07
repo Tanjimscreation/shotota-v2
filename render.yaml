@@ -6,7 +6,8 @@ services:
     region: singapore
     buildCommand: npm install && npx prisma generate && npm run build
     startCommand: npm start
-    healthCheckPath: /
+    healthCheckPath: /api/health
+    autoDeploy: true
     envVars:
       - key: NODE_ENV
         value: production
@@ -30,7 +31,7 @@ services:
           name: shotota-v2
           property: host
           prefix: "https://"
-    preDeployCommand: npx prisma db push --skip-generate
+    preDeployCommand: npx prisma migrate deploy || npx prisma db push --accept-data-loss
     maxInstances: 3
     minInstances: 1
 

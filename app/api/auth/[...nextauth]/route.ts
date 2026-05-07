@@ -2,7 +2,6 @@
 
 import NextAuth, { type NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/db/client'
 import { userStore } from '@/lib/auth/userStore'
@@ -29,7 +28,7 @@ const testDatabaseConnection = async () => {
 }
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  // Use JWT strategy instead of database adapter for serverless compatibility
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -126,7 +125,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   session: {
-    strategy: 'database',
+    strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60, // 30 days
     updateAge: 24 * 60 * 60, // 1 day
   },
