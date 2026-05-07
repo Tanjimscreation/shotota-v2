@@ -119,10 +119,11 @@ export default function SignupForm() {
           transition={{ duration: 0.6 }}
           className="hidden md:flex md:flex-col md:justify-center md:items-center bg-gradient-to-br from-sotota-accent via-sotota-accentd to-sotota-bg p-12"
         >
-          <div className="text-center">
+          <div className="text-center text-white space-y-6">
             <SototalLogo size="lg" showTagline={false} />
-            <QuoteRotator />
-            <StatsBar />
+            <blockquote className="text-lg italic border-l-4 border-white pl-6 text-left">
+              "অল্প অল্প করে বারবার পড়া, এমন Micro Revision দেয়াই চান্স-পাওয়া সব ভালো স্টুডেন্টের অভ্যাস"
+            </blockquote>
           </div>
         </motion.div>
 

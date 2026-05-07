@@ -247,6 +247,39 @@ export default function DashboardPage() {
             transition={{ duration: 0.6 }}
             className="space-y-6"
           >
+            {/* Lost Inspiration Button */}
+            <motion.a
+              href="https://www.youtube.com/watch?v=CyjUTHQyYig&list=PLSLMkUXXzznEDopqk387iktprNHRMKzTO&pp=sAgC"
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="relative block bg-gradient-to-r from-sotota-accent to-sotota-accentl p-6 rounded-lg overflow-hidden group cursor-pointer"
+            >
+              {/* Pulse glow effect */}
+              <motion.div
+                animate={{
+                  boxShadow: ['0 0 20px rgba(255, 99, 71, 0.5)', '0 0 40px rgba(255, 99, 71, 0.8)', '0 0 20px rgba(255, 99, 71, 0.5)']
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: 'easeInOut'
+                }}
+                className="absolute inset-0 rounded-lg pointer-events-none"
+              />
+              <div className="relative z-10 text-center">
+                <p className="text-white font-bold text-lg mb-2">😢 হারিয়ে ফেলেছেন অনুপ্রেরণা?</p>
+                <p className="text-white/90 text-sm">অনুপ্রেরণামূলক ভিডিও দেখুন</p>
+                <div className="mt-3 flex justify-center gap-2">
+                  <span className="text-lg">🎬</span>
+                  <span className="text-lg animate-bounce">▶️</span>
+                </div>
+              </div>
+            </motion.a>
+
             {/* Leaderboard */}
             <div className="bg-sotota-card border border-sotota-border rounded-lg p-6">
               <h3 className="text-lg font-bold text-sotota-text mb-4">শীর্ষ ৩ জন</h3>
