@@ -4,7 +4,7 @@ services:
     runtime: node
     plan: standard
     region: singapore
-    buildCommand: npm install && npx prisma generate && next build
+    buildCommand: echo "Fresh build $(date)" && npm install && npx prisma generate && next build
     startCommand: node .next/standalone/server.js
     healthCheckPath: /api/health
     autoDeploy: true
