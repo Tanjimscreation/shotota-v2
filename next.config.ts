@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* Production build for cPanel/PutulHost */
+  /* Production build for Render/cPanel */
   output: "standalone",
+  distDir: ".next",
   
   /* Optimization settings */
   compress: true,
