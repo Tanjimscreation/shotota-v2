@@ -45,15 +45,13 @@ export default function GlobalLayout({ children }: { children: React.ReactNode }
         className="fixed top-4 left-4 z-50"
       >
         <Link href="/" className="block">
-          {/* Shotota Logo Text */}
-          <div className="flex items-center gap-2 bg-white/95 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg border border-gray-200">
-            <div className="text-2xl font-bold">
-              <span className="text-red-600">সত</span>
-              <span className="text-black">ত</span>
-              <span className="text-red-600">া</span>
-            </div>
-            <div className="hidden sm:block text-xs font-semibold text-gray-700">
-              SHOTOTA
+          {/* Shotota Logo - Bengali Only with Color Palette */}
+          <div className="flex items-center gap-1 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow">
+            <div className="text-3xl font-bold tracking-tight">
+              <span className="text-red-600">স</span>
+              <span className="text-blue-600">ত</span>
+              <span className="text-red-600">ত</span>
+              <span className="text-green-600">া</span>
             </div>
           </div>
         </Link>
