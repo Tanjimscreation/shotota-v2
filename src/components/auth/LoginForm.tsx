@@ -16,7 +16,7 @@ export default function LoginForm({
 }) {
   const router = useRouter()
   const submitTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const [email, setEmail] = useState(role === 'admin' ? 'rahim@shotota.com' : 'test@test.com')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
